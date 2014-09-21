@@ -15,11 +15,11 @@ import android.util.Log;
 public class Goal extends DrawableElement {
 
 	private static final int goalColor = Color.WHITE;
-	private static final float goalHeight = 30;
-	private static final float goalWidth = 12;
+	public static final float goalHeight = 30;
+	public static final float goalWidth = 12;
 	private static final float postThickness = 1;
 	private boolean isLeft = true;
-	private Body bGoalEnd, bGoalTop;
+	public Body bGoalEnd, bGoalTop;
 
 	public Goal(float x, float y, boolean isLeft, World world) {
 		this.isLeft = isLeft;

@@ -1,6 +1,7 @@
 package com.joanalbert.footballsample.elements;
 
 import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
@@ -14,6 +15,8 @@ public class Ball extends DrawableElement{
 	
 	private static final int ballColor = Color.WHITE;
 	private static final float ballRadius = 3;
+	
+	public Body body;
 	
 	public Ball(float x, float y, World world){
 		BodyDef bodyDef = new BodyDef();
