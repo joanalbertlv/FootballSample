@@ -10,9 +10,10 @@ import org.jbox2d.dynamics.World;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 
-public class Goal extends DrawableElement {
+import com.joanalbert.footballsample.GameInfo;
+
+public class Goal {
 
 	private static final int goalColor = Color.WHITE;
 	public static final float goalHeight = 30;
@@ -62,26 +63,26 @@ public class Goal extends DrawableElement {
 		float yIni = (bGoalEnd.getPosition().y - goalHeight / 2);
 		float yEnd = (bGoalEnd.getPosition().y + goalHeight / 2);
 		while (x < (bGoalTop.getPosition().x + goalWidth / 2)) {
-			canvas.drawLine(x * WORLD_SCALE, yIni * WORLD_SCALE, x
-					* WORLD_SCALE, yEnd * WORLD_SCALE, paint);
+			canvas.drawLine(x * GameInfo.worldScale, yIni * GameInfo.worldScale, x
+					* GameInfo.worldScale, yEnd * GameInfo.worldScale, paint);
 			x += 2;
 		}
 		if (isLeft)
-			canvas.drawLine((bGoalTop.getPosition().x + goalWidth / 2) * WORLD_SCALE,
-					yIni * WORLD_SCALE, (bGoalTop.getPosition().x + goalWidth / 2)
-							* WORLD_SCALE, yEnd * WORLD_SCALE, paint);
+			canvas.drawLine((bGoalTop.getPosition().x + goalWidth / 2) * GameInfo.worldScale,
+					yIni * GameInfo.worldScale, (bGoalTop.getPosition().x + goalWidth / 2)
+							* GameInfo.worldScale, yEnd * GameInfo.worldScale, paint);
 		else
-			canvas.drawLine((bGoalTop.getPosition().x - goalWidth / 2) * WORLD_SCALE,
-					yIni * WORLD_SCALE, (bGoalTop.getPosition().x - goalWidth / 2)
-							* WORLD_SCALE, yEnd * WORLD_SCALE, paint);
+			canvas.drawLine((bGoalTop.getPosition().x - goalWidth / 2) * GameInfo.worldScale,
+					yIni * GameInfo.worldScale, (bGoalTop.getPosition().x - goalWidth / 2)
+							* GameInfo.worldScale, yEnd * GameInfo.worldScale, paint);
 		
 
 		float y = (bGoalEnd.getPosition().y - goalHeight / 2);
 		float xIni = leftX;
 		float xEnd = (bGoalTop.getPosition().x + goalWidth / 2);
 		while (y < (bGoalEnd.getPosition().y + goalHeight / 2)) {
-			canvas.drawLine(xIni * WORLD_SCALE, y * WORLD_SCALE, xEnd
-					* WORLD_SCALE, y * WORLD_SCALE, paint);
+			canvas.drawLine(xIni * GameInfo.worldScale, y * GameInfo.worldScale, xEnd
+					* GameInfo.worldScale, y * GameInfo.worldScale, paint);
 			y += 2;
 		}
 		y = (bGoalEnd.getPosition().y + goalHeight / 2);
@@ -94,15 +95,15 @@ public class Goal extends DrawableElement {
 
 		// posts
 		canvas.drawRect((bGoalEnd.getPosition().x - postThickness / 2)
-				* WORLD_SCALE, (bGoalEnd.getPosition().y - goalHeight / 2)
-				* WORLD_SCALE, (bGoalEnd.getPosition().x + postThickness / 2)
-				* WORLD_SCALE, (bGoalEnd.getPosition().y + goalHeight / 2)
-				* WORLD_SCALE, paint);
+				* GameInfo.worldScale, (bGoalEnd.getPosition().y - goalHeight / 2)
+				* GameInfo.worldScale, (bGoalEnd.getPosition().x + postThickness / 2)
+				* GameInfo.worldScale, (bGoalEnd.getPosition().y + goalHeight / 2)
+				* GameInfo.worldScale, paint);
 		canvas.drawRect((bGoalTop.getPosition().x - goalWidth / 2)
-				* WORLD_SCALE, (bGoalTop.getPosition().y - postThickness / 2)
-				* WORLD_SCALE, (bGoalTop.getPosition().x + goalWidth / 2)
-				* WORLD_SCALE, (bGoalTop.getPosition().y + postThickness / 2)
-				* WORLD_SCALE, paint);
+				* GameInfo.worldScale, (bGoalTop.getPosition().y - postThickness / 2)
+				* GameInfo.worldScale, (bGoalTop.getPosition().x + goalWidth / 2)
+				* GameInfo.worldScale, (bGoalTop.getPosition().y + postThickness / 2)
+				* GameInfo.worldScale, paint);
 		drawNet(canvas, paint);
 
 	}

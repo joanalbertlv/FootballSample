@@ -7,11 +7,13 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
+import com.joanalbert.footballsample.GameInfo;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Ball extends DrawableElement{
+public class Ball {
 	
 	private static final int ballColor = Color.WHITE;
 	private static final float ballRadius = 3;
@@ -40,8 +42,8 @@ public class Ball extends DrawableElement{
 	public void draw(Canvas canvas, Paint paint) {
 		paint.setColor(ballColor);
 		paint.setStyle(Paint.Style.FILL);
-		canvas.drawCircle(body.getPosition().x * WORLD_SCALE, body.getPosition().y * WORLD_SCALE,
-				ballRadius * WORLD_SCALE, paint);
+		canvas.drawCircle(body.getPosition().x * GameInfo.worldScale, body.getPosition().y * GameInfo.worldScale,
+				ballRadius * GameInfo.worldScale, paint);
 	}	
 	
 }

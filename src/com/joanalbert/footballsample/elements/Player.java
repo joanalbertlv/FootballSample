@@ -16,7 +16,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 
-public class Player extends DrawableElement {
+import com.joanalbert.footballsample.GameInfo;
+
+public class Player {
 	
 	private static final int faceColor = Color.MAGENTA;
 	private static final int shirtColor = Color.BLUE;
@@ -195,8 +197,8 @@ public class Player extends DrawableElement {
 		
 		paint.setStyle(Paint.Style.FILL);
 
-		canvas.drawCircle(head.getPosition().x * WORLD_SCALE, head.getPosition().y * WORLD_SCALE,
-				headRadius * WORLD_SCALE, paint);
+		canvas.drawCircle(head.getPosition().x * GameInfo.worldScale, head.getPosition().y * GameInfo.worldScale,
+				headRadius * GameInfo.worldScale, paint);
 		
 		if (isMyPlayer) paint.setColor(shirtColor);
 		else paint.setColor(shirtColorPc);
@@ -216,10 +218,10 @@ public class Player extends DrawableElement {
 	
 	public void drawRectangle(Canvas canvas, Paint paint, Body b, float width,
 			float height) {
-		float xInit = (b.getPosition().x - (width / 2)) * WORLD_SCALE;
-		float yInit = (b.getPosition().y - (height / 2)) * WORLD_SCALE;
-		float xEnd = (b.getPosition().x + (width / 2)) * WORLD_SCALE;
-		float yEnd = (b.getPosition().y + (height / 2)) * WORLD_SCALE;
+		float xInit = (b.getPosition().x - (width / 2)) * GameInfo.worldScale;
+		float yInit = (b.getPosition().y - (height / 2)) * GameInfo.worldScale;
+		float xEnd = (b.getPosition().x + (width / 2)) * GameInfo.worldScale;
+		float yEnd = (b.getPosition().y + (height / 2)) * GameInfo.worldScale;
 
 		float angle = b.getAngle();
 

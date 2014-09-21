@@ -11,7 +11,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-public class Walls extends DrawableElement{
+import com.joanalbert.footballsample.GameInfo;
+
+public class Walls {
 
 	private static final int wallsColor = Color.GREEN;
 	private static final float wallThickness = 2;
@@ -70,7 +72,7 @@ public class Walls extends DrawableElement{
 	public void draw(Canvas canvas, Paint paint) {
 		paint.setColor(wallsColor);
 		paint.setStyle(Paint.Style.STROKE);
-		canvas.drawRect((xIni+1) * WORLD_SCALE, (yIni+1) * WORLD_SCALE, (xEnd-1) * WORLD_SCALE, (yEnd-1) * WORLD_SCALE, paint);
+		canvas.drawRect((xIni+1) * GameInfo.worldScale, (yIni+1) * GameInfo.worldScale, (xEnd-1) * GameInfo.worldScale, (yEnd-1) * GameInfo.worldScale, paint);
 	}	
 	
 }
