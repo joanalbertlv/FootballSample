@@ -40,14 +40,22 @@ public class Field {
 		player = new Player(50.0f, 50.0f, world);
 	}
 	
-	int count=0; 
+	int count=1000; 
 	
-	public void update(long time) {
-		count++;
-		if (count%200==0){
-			player.torso.applyLinearImpulse(new Vec2(0, -10000), player.torso.getPosition());
-			//player.rLeg.applyLinearImpulse(new Vec2(0, -1000), player.rLeg.getPosition());
+	public void update(long time, boolean kick) {
+		if (kick) count=0;
+		if (count==0){
+			player.torso.applyLinearImpulse(new Vec2(100, -2000), player.torso.getPosition());
+			player.lLeg.applyLinearImpulse(new Vec2(100, -2000), player.lLeg.getPosition());
+			player.rLeg.applyLinearImpulse(new Vec2(100, -2000), player.lLeg.getPosition());
+		}else if (count==20){
+			player.rLeg.applyAngularImpulse(-30000);			
 		}
+		if (count<1000) count++;
+		/*else if (count%300==0){
+			player.rLeg.applyAngularImpulse(5000);
+			
+		}*/
 		
 		world.step(time / 1000.0f, velocityIterations, positionIterations);
 	}

@@ -45,7 +45,7 @@ public class Player extends DrawableElement {
 		polygon.setAsBox(torsoWidth / 2, torsoHeight / 2);
 
 		FixtureDef fDef = new FixtureDef();
-		fDef.density = 1f;
+		fDef.density = 0.2f;
 		fDef.shape = polygon;
 		torso.createFixture(fDef);
 
@@ -58,7 +58,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(legWidth / 2, legHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 8;
+		fDef.density = 15;
 		fDef.shape = polygon;
 		lLeg.createFixture(fDef);
 
@@ -71,7 +71,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(legWidth / 2, legHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 8;
+		fDef.density = 15;
 		fDef.shape = polygon;
 		rLeg.createFixture(fDef);
 
@@ -84,7 +84,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.1f;
 		fDef.shape = polygon;
 		lArm.createFixture(fDef);
 
@@ -97,7 +97,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.1f;
 		fDef.shape = polygon;
 		rArm.createFixture(fDef);
 				
@@ -123,8 +123,8 @@ public class Player extends DrawableElement {
 		lLRjd.localAnchorA = new Vec2(-(torsoWidth / 2)+(legWidth/2), torsoHeight / 2);
 		lLRjd.localAnchorB = new Vec2(0, -(legHeight / 2));
 		lLRjd.enableLimit = true;
-		lLRjd.lowerAngle = new Double(Math.toRadians(-90)).floatValue();
-		lLRjd.upperAngle = new Double(Math.toRadians(90)).floatValue();
+		lLRjd.lowerAngle = new Double(Math.toRadians(-45)).floatValue();
+		lLRjd.upperAngle = new Double(Math.toRadians(45)).floatValue();
 		world.createJoint(lLRjd);
 
 		rLRjd = new RevoluteJointDef();
