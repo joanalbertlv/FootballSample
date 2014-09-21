@@ -19,12 +19,13 @@ public class MainActivity extends Activity implements ContactListener {
 	private SurfaceView surface;
 	private SurfaceHolder surfaceHolder;
 	private Canvas c = null;
-	private Field physicsWorld;
+	private Field field;
 	private Handler handler;
 	private long time;
 	boolean kick = false;
 	float fx = 0, fy = 0;
-
+	float x1=0, x2=0, y1=0, y2=0;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,8 +34,8 @@ public class MainActivity extends Activity implements ContactListener {
 		surfaceHolder = surface.getHolder();
 		this.setContentView(surface);
 
-		physicsWorld = new Field();
-		physicsWorld.create();
+		field = new Field();
+		field.create();
 
 		handler = new Handler();
 		handler.post(update);
@@ -51,10 +52,11 @@ public class MainActivity extends Activity implements ContactListener {
 	private Runnable update = new Runnable() {
 		public void run() {
 			long now = System.currentTimeMillis();
-			physicsWorld.update(now - time, kick, fx, fy);
+			
+			field.update(now - time, kick, fx, fy);
 			time = now;
 			draw();
-			handler.postDelayed(update, (long) physicsWorld.timeStep * 1000);
+			handler.postDelayed(update, (long) field.timeStep * 1000);
 			kick = false;
 			fx = 0;
 			fy = 0;
@@ -79,10 +81,8 @@ public class MainActivity extends Activity implements ContactListener {
 	}
 
 	private void draw(Canvas canvas) {
-		physicsWorld.draw(canvas);
+		field.draw(canvas);
 	}
-
-	float x1, x2, y1, y2;
 
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -99,16 +99,12 @@ public class MainActivity extends Activity implements ContactListener {
 				kick = true;
 			} else {
 				if (dy < 0)
-					fy = dy * 10;
+					fy = dy * 4;
 				else
 					fy = 0;
-				fx = dx * 10;
-
+				fx = dx * 4;
 			}
-
-			Log.v("dif", dx + " " + dy);
 		}
-		Log.v("mot", "x " + fx + " y " + fy);
 		return true;
 
 	}
@@ -116,14 +112,11 @@ public class MainActivity extends Activity implements ContactListener {
 	@Override
 	public void beginContact(Contact arg0) {
 		// TODO Auto-generated method stub
-		Log.v("MOTION", "b");
-
 	}
 
 	@Override
 	public void endContact(Contact arg0) {
 		// TODO Auto-generated method stub
-		Log.v("MOTION", "e");
 	}
 
 	@Override
