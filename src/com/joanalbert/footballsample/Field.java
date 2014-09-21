@@ -44,8 +44,9 @@ public class Field {
 	
 	public void update(long time) {
 		count++;
-		if (count%50==0){
-			player.torso.applyLinearImpulse(new Vec2(200, -500), new Vec2(0,0));
+		if (count%200==0){
+			player.torso.applyLinearImpulse(new Vec2(0, -10000), player.torso.getPosition());
+			//player.rLeg.applyLinearImpulse(new Vec2(0, -1000), player.rLeg.getPosition());
 		}
 		
 		world.step(time / 1000.0f, velocityIterations, positionIterations);

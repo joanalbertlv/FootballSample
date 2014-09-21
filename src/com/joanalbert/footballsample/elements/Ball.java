@@ -13,7 +13,7 @@ import android.graphics.Paint;
 public class Ball extends DrawableElement{
 	
 	private static final int ballColor = Color.WHITE;
-	private static final float ballRadius = 4;
+	private static final float ballRadius = 3;
 	
 	public Ball(float x, float y, World world){
 		BodyDef bodyDef = new BodyDef();
