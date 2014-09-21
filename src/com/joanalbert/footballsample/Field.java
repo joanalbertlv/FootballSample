@@ -41,28 +41,29 @@ public class Field {
 		walls = new Walls(5.0f, 5.0f, 165.0f, 85.0f, world);
 		lGoal = new Goal(20.0f, 68.0f, true, world);
 		rGoal = new Goal(150.0f, 68.0f, false, world);
-		player = new Player(50.0f, 70.0f, world);
+		player = new Player(50.0f, 85.0f, world);
 	}
 	
 	int count=1000; 
 	
-	public void update(long time, boolean kick) {
-		
+	public void update(long time, boolean kick,  float fx, float fy) {
+		//Logic
 		if (kick) count=0;
+		player.torso.applyLinearImpulse(new Vec2(fx, fy), player.torso.getPosition());
+		player.lLeg.applyLinearImpulse(new Vec2(fx*2, fy*2), player.lLeg.getPosition());
+		player.rLeg.applyLinearImpulse(new Vec2(fx*2, fy*2), player.rLeg.getPosition());
+		
 		if (count==0){
-			ball.getBody().applyLinearImpulse(new Vec2(-2000,-3000), ball.getPosition());
-			
-			player.torso.applyLinearImpulse(new Vec2(100, -2000), player.torso.getPosition());
-			player.lLeg.applyLinearImpulse(new Vec2(100, -2000), player.lLeg.getPosition());
-			player.rLeg.applyLinearImpulse(new Vec2(100, -2000), player.lLeg.getPosition());
-		}else if (count==20){
-			player.rLeg.applyAngularImpulse(-30000);			
+			player.torso.applyLinearImpulse(new Vec2(-3000, -100), player.torso.getPosition());
+			player.lLeg.applyLinearImpulse(new Vec2(-5000, -1000), player.lLeg.getPosition());
+			player.rLeg.applyLinearImpulse(new Vec2(20000, -1000), player.rLeg.getPosition());			
+		}else if (count==10){
+			player.torso.applyLinearImpulse(new Vec2(4500, 0), player.torso.getPosition());
+			player.lLeg.applyLinearImpulse(new Vec2(8000, 0), player.lLeg.getPosition());
+			player.rLeg.applyLinearImpulse(new Vec2(-30000, 10000), player.rLeg.getPosition());	
 		}
-		if (count<1000) count++;
-		/*else if (count%300==0){
-			player.rLeg.applyAngularImpulse(5000);
-			
-		}*/
+		if (count<110) count++;
+
 		
 		world.step(time / 1000.0f, velocityIterations, positionIterations);
 	}

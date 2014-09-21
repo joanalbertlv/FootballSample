@@ -38,14 +38,14 @@ public class Player extends DrawableElement {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x, y - 30));
-		bodyDef.angularDamping = 4;
+		bodyDef.angularDamping = 10;
 		torso = world.createBody(bodyDef);
 
 		PolygonShape polygon = new PolygonShape();
 		polygon.setAsBox(torsoWidth / 2, torsoHeight / 2);
 
 		FixtureDef fDef = new FixtureDef();
-		fDef.density = 0.2f;
+		fDef.density = 0.5f;
 		fDef.shape = polygon;
 		torso.createFixture(fDef);
 
@@ -53,6 +53,7 @@ public class Player extends DrawableElement {
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
+		bodyDef.angularDamping=10;
 		lLeg = world.createBody(bodyDef);
 
 		polygon = new PolygonShape();
@@ -66,6 +67,7 @@ public class Player extends DrawableElement {
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x, y - torsoHeight));
+		bodyDef.angularDamping = 10;
 		rLeg = world.createBody(bodyDef);
 
 		polygon = new PolygonShape();
@@ -84,7 +86,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.1f;
+		fDef.density = 0.5f;
 		fDef.shape = polygon;
 		lArm.createFixture(fDef);
 
@@ -97,7 +99,7 @@ public class Player extends DrawableElement {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.1f;
+		fDef.density = 0.5f;
 		fDef.shape = polygon;
 		rArm.createFixture(fDef);
 				
@@ -111,7 +113,7 @@ public class Player extends DrawableElement {
 		circle.m_radius = headRadius;
 
 		fDef = new FixtureDef();
-		fDef.density = 0.1f;
+		fDef.density = 0.5f;
 		fDef.shape = circle;
 		head.createFixture(fDef);
 				

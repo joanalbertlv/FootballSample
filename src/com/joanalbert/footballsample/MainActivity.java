@@ -22,7 +22,8 @@ public class MainActivity extends Activity implements ContactListener {
 	private Field physicsWorld;
 	private Handler handler;
 	private long time;
-	boolean kick=false;
+	boolean kick = false;
+	float fx = 0, fy = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,11 +51,13 @@ public class MainActivity extends Activity implements ContactListener {
 	private Runnable update = new Runnable() {
 		public void run() {
 			long now = System.currentTimeMillis();
-			physicsWorld.update(now - time, kick);
+			physicsWorld.update(now - time, kick, fx, fy);
 			time = now;
 			draw();
 			handler.postDelayed(update, (long) physicsWorld.timeStep * 1000);
-			kick=false;
+			kick = false;
+			fx = 0;
+			fy = 0;
 		}
 	};
 
@@ -79,15 +82,33 @@ public class MainActivity extends Activity implements ContactListener {
 		physicsWorld.draw(canvas);
 	}
 
+	float x1, x2, y1, y2;
+
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			kick=true;
+			x1 = event.getX();
+			y1 = event.getY();
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			
 
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			x2 = event.getX();
+			y2 = event.getY();
+			float dx = x2 - x1;
+			float dy = y2 - y1;
+			if (Math.abs(dx) < 100 && Math.abs(dy) < 100) {
+				kick = true;
+			} else {
+				if (dy < 0)
+					fy = dy * 10;
+				else
+					fy = 0;
+				fx = dx * 10;
+
+			}
+
+			Log.v("dif", dx + " " + dy);
 		}
+		Log.v("mot", "x " + fx + " y " + fy);
 		return true;
 
 	}
@@ -95,27 +116,26 @@ public class MainActivity extends Activity implements ContactListener {
 	@Override
 	public void beginContact(Contact arg0) {
 		// TODO Auto-generated method stub
-		Log.v("MOTION","b");
+		Log.v("MOTION", "b");
 
 	}
 
 	@Override
 	public void endContact(Contact arg0) {
 		// TODO Auto-generated method stub
-		Log.v("MOTION","e");
+		Log.v("MOTION", "e");
 	}
 
 	@Override
 	public void preSolve(Contact contact, Manifold oldManifold) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void postSolve(Contact contact, ContactImpulse impulse) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
 }

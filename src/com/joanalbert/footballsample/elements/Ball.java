@@ -19,7 +19,6 @@ public class Ball extends DrawableElement{
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(x, y);
-		bodyDef.angularDamping = 0.01f;
 		bodyDef.allowSleep = true;
 		body = world.createBody(bodyDef);
 
@@ -28,7 +27,7 @@ public class Ball extends DrawableElement{
 
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
-		fixtureDef.density = 0.3f;
+		fixtureDef.density = 0.1f;
 		fixtureDef.friction = 0.7f;
 		fixtureDef.restitution = 0.8f;
 
