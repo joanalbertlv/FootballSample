@@ -7,9 +7,11 @@ import org.jbox2d.dynamics.contacts.Contact;
 
 import android.app.Activity;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -36,8 +38,13 @@ public class MainActivity extends Activity implements ContactListener {
 		surfaceHolder = surface.getHolder();
 		this.setContentView(surface);
 
+		//Get the size of the screen
+		Display display = getWindowManager().getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		
 		// Field of the game created
-		field = new Field();
+		field = new Field(size.x,size.y);
 		field.create();
 
 		// Handler to manage the thread to update the game

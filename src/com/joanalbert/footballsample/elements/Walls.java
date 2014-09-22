@@ -13,66 +13,72 @@ import android.graphics.Paint;
 
 import com.joanalbert.footballsample.GameInfo;
 
+//This class represents the limits of the field
 public class Walls {
 
 	private static final int wallsColor = Color.GREEN;
 	private static final float wallThickness = 2;
 	float xIni, yIni, xEnd, yEnd;
-	
-	public Walls(float xIni, float yIni, float xEnd, float yEnd, World world){
-		this.xIni=xIni;
-		this.yIni=yIni;
-		this.xEnd=xEnd;
-		this.yEnd=yEnd;
+
+	public Walls(float xIni, float yIni, float xEnd, float yEnd, World world) {
+		this.xIni = xIni;
+		this.yIni = yIni;
+		this.xEnd = xEnd;
+		this.yEnd = yEnd;
 		BodyDef bBodyDef;
 		Body bBody;
 		PolygonShape groundBox;
 
-		// DOWN
+		// Definition of the bodies and their properties
+		// Down
 		bBodyDef = new BodyDef();
 		bBodyDef.type = BodyType.STATIC;
 		bBodyDef.position.set(new Vec2(xIni, yEnd));
 		bBody = world.createBody(bBodyDef);
 
 		groundBox = new PolygonShape();
-		groundBox.setAsBox(xEnd-xIni, wallThickness);
+		groundBox.setAsBox(xEnd - xIni, wallThickness);
 		bBody.createFixture(groundBox, 20.0f);
 
-		// LEFT
+		// Left
 		bBodyDef = new BodyDef();
 		bBodyDef.type = BodyType.STATIC;
 		bBodyDef.position.set(new Vec2(xIni, yIni));
 		bBody = world.createBody(bBodyDef);
 
 		groundBox = new PolygonShape();
-		groundBox.setAsBox(wallThickness, yEnd-yIni);
+		groundBox.setAsBox(wallThickness, yEnd - yIni);
 		bBody.createFixture(groundBox, 20.0f);
 
-		// TOP
+		// Top
 		bBodyDef = new BodyDef();
 		bBodyDef.type = BodyType.STATIC;
 		bBodyDef.position.set(new Vec2(xIni, yIni));
 		bBody = world.createBody(bBodyDef);
 
 		groundBox = new PolygonShape();
-		groundBox.setAsBox(xEnd-xIni, wallThickness);
+		groundBox.setAsBox(xEnd - xIni, wallThickness);
 		bBody.createFixture(groundBox, 20.0f);
 
-		// RIGHT
+		// Right
 		bBodyDef = new BodyDef();
 		bBodyDef.type = BodyType.STATIC;
 		bBodyDef.position.set(new Vec2(xEnd, yIni));
 		bBody = world.createBody(bBodyDef);
 
 		groundBox = new PolygonShape();
-		groundBox.setAsBox(wallThickness, yEnd-yIni);
-		bBody.createFixture(groundBox, 20.0f);	
-	}	
-	
+		groundBox.setAsBox(wallThickness, yEnd - yIni);
+		bBody.createFixture(groundBox, 20.0f);
+	}
+
+	// Method to draw the limits of the field in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {
 		paint.setColor(wallsColor);
 		paint.setStyle(Paint.Style.STROKE);
-		canvas.drawRect((xIni+1) * GameInfo.worldScale, (yIni+1) * GameInfo.worldScale, (xEnd-1) * GameInfo.worldScale, (yEnd-1) * GameInfo.worldScale, paint);
-	}	
-	
+		// We do not draw the bodies but a rectangle
+		canvas.drawRect((xIni + 1) * GameInfo.worldScale, (yIni + 1)
+				* GameInfo.worldScale, (xEnd - 1) * GameInfo.worldScale,
+				(yEnd - 1) * GameInfo.worldScale, paint);
+	}
+
 }

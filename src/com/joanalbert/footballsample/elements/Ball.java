@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+//This class represents the ball
 public class Ball {
 	
 	private static final int ballColor = Color.WHITE;
@@ -21,6 +22,7 @@ public class Ball {
 	public Body body;
 	
 	public Ball(float x, float y, World world){
+		//Definition of the body and its properties
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(x, y);
@@ -39,6 +41,7 @@ public class Ball {
 		body.createFixture(fixtureDef);		
 	}	
 	
+	//Method to draw a ball in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {
 		paint.setColor(ballColor);
 		paint.setStyle(Paint.Style.FILL);

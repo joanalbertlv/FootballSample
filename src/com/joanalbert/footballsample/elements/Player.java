@@ -18,16 +18,19 @@ import android.graphics.Point;
 
 import com.joanalbert.footballsample.GameInfo;
 
+//This class represents a football player
 public class Player {
-	
+
 	private static final int faceColor = Color.MAGENTA;
+	// Colors of team 1
 	private static final int shirtColor = Color.BLUE;
 	private static final int shirt2Color = Color.RED;
 	private static final int shortsColor = Color.BLUE;
+	// Colors of team 2
 	private static final int shirtColorPc = Color.WHITE;
 	private static final int shirt2ColorPc = Color.BLUE;
 	private static final int shortsColorPc = Color.BLUE;
-	
+
 	float torsoWidth = 7.0f;
 	float torsoHeight = 13.0f;
 	float legWidth = 3f;
@@ -35,15 +38,18 @@ public class Player {
 	float armWidth = 2f;
 	float armHeight = 7.0f;
 	float headRadius = 3.0f;
-	boolean isMyPlayer=true;
-	
+	boolean isMyPlayer = true; // To distinguish between players of each team
+
+	// Bodies of the torso, left and right legs/arms and head
 	public Body torso, lLeg, rLeg, lArm, rArm, head;
+	// Joints between torso and legs/arms/head
 	public RevoluteJointDef lLRjd, rLRjd, lARjd, rARjd, hRjd;
-	
+
 	public Player(float x, float y, boolean isMyPlayer, World world) {
-		this.isMyPlayer=isMyPlayer;
-		
-		// TORSO
+		this.isMyPlayer = isMyPlayer;
+
+		// Definition of the bodies and their properties
+		// Torso
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x, y - 30));
@@ -58,12 +64,15 @@ public class Player {
 		fDef.shape = polygon;
 		torso.createFixture(fDef);
 
-		// LEFT LEG
+		// Left leg
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		if (isMyPlayer) bodyDef.position.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
-		else bodyDef.position.set(new Vec2(x, y - torsoHeight));
-		bodyDef.angularDamping=10;
+		if (isMyPlayer)
+			bodyDef.position
+					.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
+		else
+			bodyDef.position.set(new Vec2(x, y - torsoHeight));
+		bodyDef.angularDamping = 10;
 		lLeg = world.createBody(bodyDef);
 
 		polygon = new PolygonShape();
@@ -73,11 +82,14 @@ public class Player {
 		fDef.shape = polygon;
 		lLeg.createFixture(fDef);
 
-		// RIGHT LEG
+		// Right leg
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
-		if (isMyPlayer) bodyDef.position.set(new Vec2(x, y - torsoHeight));
-		else bodyDef.position.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));		
+		if (isMyPlayer)
+			bodyDef.position.set(new Vec2(x, y - torsoHeight));
+		else
+			bodyDef.position
+					.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
 		bodyDef.angularDamping = 10;
 		rLeg = world.createBody(bodyDef);
 
@@ -88,7 +100,7 @@ public class Player {
 		fDef.shape = polygon;
 		rLeg.createFixture(fDef);
 
-		// LEFT ARM
+		// Left arm
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
@@ -101,7 +113,7 @@ public class Player {
 		fDef.shape = polygon;
 		lArm.createFixture(fDef);
 
-		// RIGHT ARM
+		// Right arm
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x, y - torsoHeight));
@@ -113,8 +125,8 @@ public class Player {
 		fDef.density = 0.5f;
 		fDef.shape = polygon;
 		rArm.createFixture(fDef);
-				
-		// HEAD
+
+		// Head
 		bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(new Vec2(x - (torsoWidth / 2), y - torsoHeight));
@@ -127,33 +139,41 @@ public class Player {
 		fDef.density = 0.5f;
 		fDef.shape = circle;
 		head.createFixture(fDef);
-				
-		//Torso to legs
+
+		// Torso to legs
 		lLRjd = new RevoluteJointDef();
 		lLRjd.bodyA = torso;
 		lLRjd.bodyB = lLeg;
 		lLRjd.collideConnected = false;
-		if (isMyPlayer) lLRjd.localAnchorA = new Vec2(-(torsoWidth / 2)+(legWidth/2), torsoHeight / 2);
-		else lLRjd.localAnchorA = new Vec2((torsoWidth / 2)-(legWidth/2), torsoHeight / 2);
+		if (isMyPlayer)
+			lLRjd.localAnchorA = new Vec2(-(torsoWidth / 2) + (legWidth / 2),
+					torsoHeight / 2);
+		else
+			lLRjd.localAnchorA = new Vec2((torsoWidth / 2) - (legWidth / 2),
+					torsoHeight / 2);
 		lLRjd.localAnchorB = new Vec2(0, -(legHeight / 2));
 		lLRjd.enableLimit = true;
-		lLRjd.lowerAngle = new Double(Math.toRadians(-45)).floatValue();
-		lLRjd.upperAngle = new Double(Math.toRadians(45)).floatValue();
+		lLRjd.lowerAngle = Double.valueOf(Math.toRadians(-45)).floatValue();
+		lLRjd.upperAngle = Double.valueOf(Math.toRadians(45)).floatValue();
 		world.createJoint(lLRjd);
 
 		rLRjd = new RevoluteJointDef();
 		rLRjd.bodyA = torso;
 		rLRjd.bodyB = rLeg;
 		rLRjd.collideConnected = false;
-		if (isMyPlayer) rLRjd.localAnchorA = new Vec2((torsoWidth / 2)-(legWidth/2), torsoHeight / 2);
-		else  rLRjd.localAnchorA = new Vec2(-(torsoWidth / 2)+(legWidth/2), torsoHeight / 2);
+		if (isMyPlayer)
+			rLRjd.localAnchorA = new Vec2((torsoWidth / 2) - (legWidth / 2),
+					torsoHeight / 2);
+		else
+			rLRjd.localAnchorA = new Vec2(-(torsoWidth / 2) + (legWidth / 2),
+					torsoHeight / 2);
 		rLRjd.localAnchorB = new Vec2(0, -(legHeight / 2));
 		rLRjd.enableLimit = true;
-		rLRjd.lowerAngle = new Double(Math.toRadians(-90)).floatValue();
-		rLRjd.upperAngle = new Double(Math.toRadians(90)).floatValue();
+		rLRjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
+		rLRjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
 		world.createJoint(rLRjd);
-		
-		//Torso to arms
+
+		// Torso to arms
 		lARjd = new RevoluteJointDef();
 		lARjd.bodyA = torso;
 		lARjd.bodyB = lArm;
@@ -161,10 +181,10 @@ public class Player {
 		lARjd.localAnchorA = new Vec2(-torsoWidth / 2, -torsoHeight / 2);
 		lARjd.localAnchorB = new Vec2(0, -(armHeight / 2));
 		lARjd.enableLimit = true;
-		lARjd.lowerAngle = new Double(Math.toRadians(-90)).floatValue();
-		lARjd.upperAngle = new Double(Math.toRadians(90)).floatValue();
+		lARjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
+		lARjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
 		world.createJoint(lARjd);
-		
+
 		rARjd = new RevoluteJointDef();
 		rARjd.bodyA = torso;
 		rARjd.bodyB = rArm;
@@ -172,11 +192,11 @@ public class Player {
 		rARjd.localAnchorA = new Vec2(torsoWidth / 2, -torsoHeight / 2);
 		rARjd.localAnchorB = new Vec2(0, -(armHeight / 2));
 		rARjd.enableLimit = true;
-		rARjd.lowerAngle = new Double(Math.toRadians(-90)).floatValue();
-		rARjd.upperAngle = new Double(Math.toRadians(90)).floatValue();
+		rARjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
+		rARjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
 		world.createJoint(rARjd);
-		
-		//Torso to head
+
+		// Torso to head
 		hRjd = new RevoluteJointDef();
 		hRjd.bodyA = torso;
 		hRjd.bodyB = head;
@@ -184,38 +204,50 @@ public class Player {
 		hRjd.localAnchorA = new Vec2(0, -torsoHeight / 2);
 		hRjd.localAnchorB = new Vec2(0, headRadius);
 		hRjd.enableLimit = true;
-		hRjd.lowerAngle = new Double(Math.toRadians(-90)).floatValue();
-		hRjd.upperAngle = new Double(Math.toRadians(90)).floatValue();
-		world.createJoint(hRjd);		
+		hRjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
+		hRjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
+		world.createJoint(hRjd);
 
 	}
 
-
+	// Method to draw a player in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {
-		
+
 		paint.setColor(faceColor);
-		
 		paint.setStyle(Paint.Style.FILL);
 
-		canvas.drawCircle(head.getPosition().x * GameInfo.worldScale, head.getPosition().y * GameInfo.worldScale,
-				headRadius * GameInfo.worldScale, paint);
-		
-		if (isMyPlayer) paint.setColor(shirtColor);
-		else paint.setColor(shirtColorPc);
+		// Head
+		canvas.drawCircle(head.getPosition().x * GameInfo.worldScale,
+				head.getPosition().y * GameInfo.worldScale, headRadius
+						* GameInfo.worldScale, paint);
+
+		// Torso and arms
+		if (isMyPlayer)
+			paint.setColor(shirtColor);
+		else
+			paint.setColor(shirtColorPc);
 		drawRectangle(canvas, paint, torso, torsoWidth, torsoHeight);
 		drawRectangle(canvas, paint, lArm, armWidth, armHeight);
 		drawRectangle(canvas, paint, rArm, armWidth, armHeight);
-		
-		if (isMyPlayer) paint.setColor(shortsColor);
-		else paint.setColor(shortsColorPc);
+
+		// Legs
+		if (isMyPlayer)
+			paint.setColor(shortsColor);
+		else
+			paint.setColor(shortsColorPc);
 		drawRectangle(canvas, paint, lLeg, legWidth, legHeight);
 		drawRectangle(canvas, paint, rLeg, legWidth, legHeight);
-		
-		if (isMyPlayer) paint.setColor(shirt2Color);
-		else paint.setColor(shirt2ColorPc);
-		drawRectangle(canvas, paint, torso, torsoWidth-4, torsoHeight);
+
+		// Color 2 of the shirt (no body)
+		if (isMyPlayer)
+			paint.setColor(shirt2Color);
+		else
+			paint.setColor(shirt2ColorPc);
+		drawRectangle(canvas, paint, torso, torsoWidth - 4, torsoHeight);
 	}
-	
+
+	// Method to draw a filled rectangle in the specified canvas
+		// It considers the angle of the rectangle
 	public void drawRectangle(Canvas canvas, Paint paint, Body b, float width,
 			float height) {
 		float xInit = (b.getPosition().x - (width / 2)) * GameInfo.worldScale;
@@ -228,6 +260,7 @@ public class Player {
 		Vec2 center = new Vec2(xInit + ((xEnd - xInit) / 2), yInit
 				+ ((yEnd - yInit) / 2));
 
+		// Calculate the four points of the rectangle depending on the angle
 		Point upLeft = new Point(
 		// x-coordinate
 				(int) Math.round(center.x
@@ -267,17 +300,16 @@ public class Player {
 						+ ((xInit - center.x) * Math.sin(angle))
 						+ ((yEnd - center.y) * Math.cos(angle))));
 
+		// Join the four points
 		Path wallpath = new Path();
-		wallpath.reset(); // only needed when reusing this path for a new build
-		wallpath.moveTo(upLeft.x, upLeft.y); // used for first point
+		wallpath.reset(); 
+		wallpath.moveTo(upLeft.x, upLeft.y); 
 		wallpath.lineTo(upRight.x, upRight.y);
 		wallpath.lineTo(downRight.x, downRight.y);
 		wallpath.lineTo(downLeft.x, downLeft.y);
-		wallpath.lineTo(upLeft.x, upLeft.y); // there is a setLastPoint action but i found it not to work as expected
-
+		wallpath.lineTo(upLeft.x, upLeft.y); 
 		canvas.drawPath(wallpath, paint);
 
 	}
-
 
 }

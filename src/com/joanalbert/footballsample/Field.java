@@ -14,7 +14,8 @@ import com.joanalbert.footballsample.elements.Goal;
 import com.joanalbert.footballsample.elements.Player;
 import com.joanalbert.footballsample.elements.Walls;
 
-// This class contains all the logical and graphical information about the game
+//This class represents the field in which the game takes place.
+//It contains all the logics and it draws all the elements.
 public class Field {
 
 	private static final int backgroundColor = Color.BLACK;
@@ -22,6 +23,7 @@ public class Field {
 	public float timeStep = 1.0f / 60.0f;
 	private int velocityIterations = 6;
 	private int positionIterations = 2;
+	private float screenWidth, screenHeight, half;
 
 	// Elements of the game
 	private Ball ball;
@@ -34,23 +36,33 @@ public class Field {
 
 	private boolean isGoal = false;
 
-	public Field() {
+	public Field(float screenWidth, float screenHeight) {
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
 		paint = new Paint();
 	}
 
-	public void create() {
+	private void initialize() {
 		// Initialize all the elements of the game
 		Vec2 gravity = new Vec2(0f, 9.8f);
 		boolean doSleep = true;
 		world = new World(gravity, doSleep);
-		ball = new Ball(80.0f, 40.0f, world);
-		walls = new Walls(10.0f, 5.0f, 160.0f, 85.0f, world);
-		lGoal = new Goal(20.0f, 68.0f, true, world);
-		rGoal = new Goal(150.0f, 68.0f, false, world);
-		myPlayer1 = new Player(50.0f, 85.0f, true, world);
-		myPlayer2 = new Player(65.0f, 85.0f, true, world);
-		pcPlayer1 = new Player(95.0f, 85.0f, false, world);
-		pcPlayer2 = new Player(110.0f, 85.0f, false, world);
+		float half = ((screenWidth / 11) / 2) + 10;
+		ball = new Ball(half, 40.0f, world);
+		walls = new Walls(10.0f, 5.0f, screenWidth / 11, screenHeight / 13,
+				world);
+		lGoal = new Goal(20.0f, (screenHeight / 13) - 16.0f, true, world);
+		rGoal = new Goal((screenWidth / 11) - 10.0f,
+				(screenHeight / 13) - 16.0f, false, world);
+		
+		myPlayer1 = new Player(half - 40.0f, 85.0f, true, world);
+		myPlayer2 = new Player(half - 20.0f, 85.0f, true, world);
+		pcPlayer1 = new Player(half + 20.0f, 85.0f, false, world);
+		pcPlayer2 = new Player(half + 40.0f, 85.0f, false, world);
+	}
+
+	public void create() {
+		initialize();
 	}
 
 	// Counters used for long actions (kick, goal animation, etc.)
@@ -63,18 +75,8 @@ public class Field {
 			goalCount++;
 			if (goalCount == 300) {
 				// After some cycles showing a goal message, we restart the game
-				isGoal = false;
-				Vec2 gravity = new Vec2(0f, 9.8f);
-				boolean doSleep = true;
-				world = new World(gravity, doSleep);
-				ball = new Ball(80.0f, 40.0f, world);
-				walls = new Walls(10.0f, 5.0f, 160.0f, 85.0f, world);
-				lGoal = new Goal(20.0f, 68.0f, true, world);
-				rGoal = new Goal(150.0f, 68.0f, false, world);
-				myPlayer1 = new Player(50.0f, 85.0f, true, world);
-				myPlayer2 = new Player(65.0f, 85.0f, true, world);
-				pcPlayer1 = new Player(95.0f, 85.0f, false, world);
-				pcPlayer2 = new Player(110.0f, 85.0f, false, world);
+				isGoal=false;
+				initialize();
 			}
 		} else {
 			// Detect goal
@@ -104,6 +106,13 @@ public class Field {
 		// If the players are touching the floor, we apply the forces according
 		// to the movements of the finger in the screen
 		if (myPlayer1.torso.getPosition().y > 60) {
+			// Detect if the player has fallen
+			if (Math.abs(myPlayer1.head.getPosition().x
+					- myPlayer1.lLeg.getPosition().x) > 20) {
+				// Try to recover position
+				myPlayer1.torso.applyLinearImpulse(new Vec2(0, -10000),
+						myPlayer1.torso.getPosition());
+			}
 			myPlayer1.torso.applyLinearImpulse(new Vec2(fx, fy),
 					myPlayer1.torso.getPosition());
 			myPlayer1.lLeg.applyLinearImpulse(new Vec2(fx * 2, fy * 2),
@@ -112,6 +121,13 @@ public class Field {
 					myPlayer1.rLeg.getPosition());
 		}
 		if (myPlayer2.torso.getPosition().y > 60) {
+			// Detect if the player has fallen
+			if (Math.abs(myPlayer2.head.getPosition().x
+					- myPlayer2.lLeg.getPosition().x) > 20) {
+				// Try to recover position
+				myPlayer2.torso.applyLinearImpulse(new Vec2(0, -10000),
+						myPlayer2.torso.getPosition());
+			}
 			myPlayer2.torso.applyLinearImpulse(new Vec2(fx, fy),
 					myPlayer2.torso.getPosition());
 			myPlayer2.lLeg.applyLinearImpulse(new Vec2(fx * 2, fy * 2),
@@ -177,6 +193,13 @@ public class Field {
 		// If the players are touching the floor, we apply the forces according
 		// to the movements decided before
 		if (pcPlayer1.torso.getPosition().y > 60) {
+			// Detect if the player has fallen
+			if (Math.abs(pcPlayer1.head.getPosition().x
+					- pcPlayer1.lLeg.getPosition().x) > 20) {
+				// Try to recover position
+				pcPlayer1.torso.applyLinearImpulse(new Vec2(0, -10000),
+						pcPlayer1.torso.getPosition());
+			}
 			pcPlayer1.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
 					pcPlayer1.torso.getPosition());
 			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
@@ -185,6 +208,13 @@ public class Field {
 					pcPlayer1.rLeg.getPosition());
 		}
 		if (pcPlayer2.torso.getPosition().y > 60) {
+			// Detect if the player has fallen
+			if (Math.abs(pcPlayer2.head.getPosition().x
+					- pcPlayer2.lLeg.getPosition().x) > 20) {
+				// Try to recover position
+				pcPlayer2.torso.applyLinearImpulse(new Vec2(0, -10000),
+						pcPlayer2.torso.getPosition());
+			}
 			pcPlayer2.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
 					pcPlayer2.torso.getPosition());
 			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
@@ -254,13 +284,13 @@ public class Field {
 
 		// We draw each one of the elements
 		walls.draw(canvas, paint);
-		lGoal.draw(canvas, paint);
-		rGoal.draw(canvas, paint);
 		ball.draw(canvas, paint);
 		myPlayer1.draw(canvas, paint);
 		myPlayer2.draw(canvas, paint);
 		pcPlayer1.draw(canvas, paint);
 		pcPlayer2.draw(canvas, paint);
+		lGoal.draw(canvas, paint);
+		rGoal.draw(canvas, paint);
 	}
 
 }
