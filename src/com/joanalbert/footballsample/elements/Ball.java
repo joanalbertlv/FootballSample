@@ -7,22 +7,27 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
-import com.joanalbert.footballsample.GameInfo;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
+
+import com.joanalbert.footballsample.GameInfo;
 
 //This class represents the ball
 public class Ball {
-	
+
 	private static final int ballColor = Color.WHITE;
-	private static final float ballRadius = 3;
-	
+	private static float ballRadius;
+
 	public Body body;
-	
-	public Ball(float x, float y, World world){
-		//Definition of the body and its properties
+
+	public Ball(World world) {
+		float x = GameInfo.screenHalfWidth;
+		float y = GameInfo.screenHalfHeight;
+		ballRadius = GameInfo.screenWidth / 58;
+
+		// Definition of the body and its properties
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DYNAMIC;
 		bodyDef.position.set(x, y);
@@ -38,15 +43,16 @@ public class Ball {
 		fixtureDef.friction = 0.7f;
 		fixtureDef.restitution = 0.8f;
 
-		body.createFixture(fixtureDef);		
-	}	
-	
-	//Method to draw a ball in the specified canvas
+		body.createFixture(fixtureDef);
+	}
+
+	// Method to draw a ball in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {
 		paint.setColor(ballColor);
 		paint.setStyle(Paint.Style.FILL);
-		canvas.drawCircle(body.getPosition().x * GameInfo.worldScale, body.getPosition().y * GameInfo.worldScale,
-				ballRadius * GameInfo.worldScale, paint);
-	}	
-	
+		canvas.drawCircle(body.getPosition().x * GameInfo.worldScale,
+				body.getPosition().y * GameInfo.worldScale, ballRadius
+						* GameInfo.worldScale, paint);
+	}
+
 }

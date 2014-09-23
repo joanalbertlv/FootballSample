@@ -31,14 +31,14 @@ public class Player {
 	private static final int shirt2ColorPc = Color.BLUE;
 	private static final int shortsColorPc = Color.BLUE;
 
-	float torsoWidth = 7.0f;
-	float torsoHeight = 13.0f;
-	float legWidth = 3f;
-	float legHeight = 10.0f;
-	float armWidth = 2f;
-	float armHeight = 7.0f;
-	float headRadius = 3.0f;
-	boolean isMyPlayer = true; // To distinguish between players of each team
+	private static float torsoWidth;
+	private static float torsoHeight;
+	private static float legWidth;
+	private static float legHeight;
+	private static float armWidth;
+	private static float armHeight;
+	private static float headRadius;
+	private boolean isMyPlayer = true; // To distinguish between players of each team
 
 	// Bodies of the torso, left and right legs/arms and head
 	public Body torso, lLeg, rLeg, lArm, rArm, head;
@@ -46,6 +46,14 @@ public class Player {
 	public RevoluteJointDef lLRjd, rLRjd, lARjd, rARjd, hRjd;
 
 	public Player(float x, float y, boolean isMyPlayer, World world) {
+		torsoWidth = GameInfo.screenWidth/25.0f;
+		torsoHeight =  GameInfo.screenHeight/6.5f;
+		legWidth = GameInfo.screenWidth/58.0f;
+		legHeight = GameInfo.screenHeight/8.3f;
+		armWidth = GameInfo.screenWidth/87f;
+		armHeight = GameInfo.screenHeight/9f;
+		headRadius = GameInfo.screenWidth / 58f;
+		
 		this.isMyPlayer = isMyPlayer;
 
 		// Definition of the bodies and their properties
@@ -145,32 +153,42 @@ public class Player {
 		lLRjd.bodyA = torso;
 		lLRjd.bodyB = lLeg;
 		lLRjd.collideConnected = false;
-		if (isMyPlayer)
+		if (isMyPlayer){
 			lLRjd.localAnchorA = new Vec2(-(torsoWidth / 2) + (legWidth / 2),
 					torsoHeight / 2);
-		else
+			lLRjd.upperAngle = Double.valueOf(Math.toRadians(45)).floatValue();
+			lLRjd.lowerAngle = Double.valueOf(Math.toRadians(0)).floatValue();
+		}else{
 			lLRjd.localAnchorA = new Vec2((torsoWidth / 2) - (legWidth / 2),
 					torsoHeight / 2);
+			lLRjd.upperAngle = Double.valueOf(Math.toRadians(0)).floatValue();
+			lLRjd.lowerAngle = Double.valueOf(Math.toRadians(-45)).floatValue();
+		}
+		
 		lLRjd.localAnchorB = new Vec2(0, -(legHeight / 2));
 		lLRjd.enableLimit = true;
-		lLRjd.lowerAngle = Double.valueOf(Math.toRadians(-45)).floatValue();
-		lLRjd.upperAngle = Double.valueOf(Math.toRadians(45)).floatValue();
+		
+		
 		world.createJoint(lLRjd);
 
 		rLRjd = new RevoluteJointDef();
 		rLRjd.bodyA = torso;
 		rLRjd.bodyB = rLeg;
 		rLRjd.collideConnected = false;
-		if (isMyPlayer)
+		if (isMyPlayer){
 			rLRjd.localAnchorA = new Vec2((torsoWidth / 2) - (legWidth / 2),
 					torsoHeight / 2);
-		else
+			rLRjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
+			rLRjd.upperAngle = Double.valueOf(Math.toRadians(0)).floatValue();
+		}else{
 			rLRjd.localAnchorA = new Vec2(-(torsoWidth / 2) + (legWidth / 2),
 					torsoHeight / 2);
+			rLRjd.lowerAngle = Double.valueOf(Math.toRadians(0)).floatValue();
+			rLRjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
+		}
+		
 		rLRjd.localAnchorB = new Vec2(0, -(legHeight / 2));
 		rLRjd.enableLimit = true;
-		rLRjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
-		rLRjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
 		world.createJoint(rLRjd);
 
 		// Torso to arms
@@ -181,8 +199,8 @@ public class Player {
 		lARjd.localAnchorA = new Vec2(-torsoWidth / 2, -torsoHeight / 2);
 		lARjd.localAnchorB = new Vec2(0, -(armHeight / 2));
 		lARjd.enableLimit = true;
-		lARjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
-		lARjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
+		lARjd.lowerAngle = Double.valueOf(Math.toRadians(0)).floatValue();
+		lARjd.upperAngle = Double.valueOf(Math.toRadians(110)).floatValue();
 		world.createJoint(lARjd);
 
 		rARjd = new RevoluteJointDef();
@@ -192,8 +210,8 @@ public class Player {
 		rARjd.localAnchorA = new Vec2(torsoWidth / 2, -torsoHeight / 2);
 		rARjd.localAnchorB = new Vec2(0, -(armHeight / 2));
 		rARjd.enableLimit = true;
-		rARjd.lowerAngle = Double.valueOf(Math.toRadians(-90)).floatValue();
-		rARjd.upperAngle = Double.valueOf(Math.toRadians(90)).floatValue();
+		rARjd.lowerAngle = Double.valueOf(Math.toRadians(-110)).floatValue();
+		rARjd.upperAngle = Double.valueOf(Math.toRadians(0)).floatValue();
 		world.createJoint(rARjd);
 
 		// Torso to head
@@ -243,7 +261,7 @@ public class Player {
 			paint.setColor(shirt2Color);
 		else
 			paint.setColor(shirt2ColorPc);
-		drawRectangle(canvas, paint, torso, torsoWidth - 4, torsoHeight);
+		drawRectangle(canvas, paint, torso, torsoWidth - (torsoWidth/3), torsoHeight);
 	}
 
 	// Method to draw a filled rectangle in the specified canvas

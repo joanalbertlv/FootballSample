@@ -10,6 +10,7 @@ import org.jbox2d.dynamics.World;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.joanalbert.footballsample.GameInfo;
 
@@ -17,15 +18,28 @@ import com.joanalbert.footballsample.GameInfo;
 public class Goal {
 
 	private static final int goalColor = Color.WHITE;
-	public static final float goalHeight = 30;
-	public static final float goalWidth = 12;
-	private static final float postThickness = 1;
+	public static float goalHeight;
+	public static float goalWidth;
+	private static float postThickness;
 	private boolean isLeft = true; // To distinguish between the two goals
 	public Body bGoalEnd; // The end part of the goal
 	public Body bGoalTop; // The top part of the goal
 
-	public Goal(float x, float y, boolean isLeft, World world) {
+	public Goal(boolean isLeft, World world) {
+		goalHeight = GameInfo.screenHeight/2.5f;
+		goalWidth = GameInfo.screenWidth/13f;
+		postThickness = GameInfo.screenWidth/174f;
+	
+		float x=0; float y=0;
 		this.isLeft = isLeft;
+		if (isLeft){
+			x=20.0f;
+			y=GameInfo.screenHeight - (goalHeight/2) - postThickness; 
+		}else{
+			x=GameInfo.screenWidth - 10.0f;
+			y=GameInfo.screenHeight - (goalHeight/2) - postThickness;
+		}
+		
 		PolygonShape groundBox;
 		BodyDef bBodyDef = null;
 		// Definition of the bodies and their properties

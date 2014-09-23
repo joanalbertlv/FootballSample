@@ -43,8 +43,12 @@ public class MainActivity extends Activity implements ContactListener {
 		Point size = new Point();
 		display.getSize(size);
 		
+		GameInfo.screenWidth=size.x/ 11;
+		GameInfo.screenHeight=size.y/ 13;
+		GameInfo.screenHalfWidth = (GameInfo.screenWidth / 2);
+		GameInfo.screenHalfHeight = (GameInfo.screenHeight / 2);
 		// Field of the game created
-		field = new Field(size.x,size.y);
+		field = new Field();
 		field.create();
 
 		// Handler to manage the thread to update the game

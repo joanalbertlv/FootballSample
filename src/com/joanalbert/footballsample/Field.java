@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.World;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 
 import com.joanalbert.footballsample.elements.Ball;
 import com.joanalbert.footballsample.elements.Goal;
@@ -23,7 +24,6 @@ public class Field {
 	public float timeStep = 1.0f / 60.0f;
 	private int velocityIterations = 6;
 	private int positionIterations = 2;
-	private float screenWidth, screenHeight, half;
 
 	// Elements of the game
 	private Ball ball;
@@ -36,9 +36,7 @@ public class Field {
 
 	private boolean isGoal = false;
 
-	public Field(float screenWidth, float screenHeight) {
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
+	public Field() {
 		paint = new Paint();
 	}
 
@@ -46,19 +44,17 @@ public class Field {
 		// Initialize all the elements of the game
 		Vec2 gravity = new Vec2(0f, 9.8f);
 		boolean doSleep = true;
-		world = new World(gravity, doSleep);
-		float half = ((screenWidth / 11) / 2) + 10;
-		ball = new Ball(half, 40.0f, world);
-		walls = new Walls(10.0f, 5.0f, screenWidth / 11, screenHeight / 13,
+		world = new World(gravity, doSleep);		
+		ball = new Ball(world);
+		walls = new Walls(10.0f, 5.0f, GameInfo.screenWidth , GameInfo.screenHeight,
 				world);
-		lGoal = new Goal(20.0f, (screenHeight / 13) - 16.0f, true, world);
-		rGoal = new Goal((screenWidth / 11) - 10.0f,
-				(screenHeight / 13) - 16.0f, false, world);
+		lGoal = new Goal(true, world);
+		rGoal = new Goal(false, world);
 		
-		myPlayer1 = new Player(half - 40.0f, 85.0f, true, world);
-		myPlayer2 = new Player(half - 20.0f, 85.0f, true, world);
-		pcPlayer1 = new Player(half + 20.0f, 85.0f, false, world);
-		pcPlayer2 = new Player(half + 40.0f, 85.0f, false, world);
+		myPlayer1 = new Player(GameInfo.screenHalfWidth - 40.0f, GameInfo.screenHalfHeight+10, true, world);
+		myPlayer2 = new Player(GameInfo.screenHalfWidth - 20.0f, GameInfo.screenHalfHeight+10, true, world);
+		pcPlayer1 = new Player(GameInfo.screenHalfWidth + 20.0f, GameInfo.screenHalfHeight+10, false, world);
+		pcPlayer2 = new Player(GameInfo.screenHalfWidth + 40.0f, GameInfo.screenHalfHeight+10, false, world);
 	}
 
 	public void create() {
@@ -269,15 +265,16 @@ public class Field {
 
 		// Scoreboard drawn
 		paint.setColor(Color.WHITE);
+		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(60);
 		canvas.drawText("Team1  " + GameInfo.myGoals + " - " + GameInfo.pcGoals
-				+ "  Team2 ", 55 * GameInfo.worldScale,
+				+ "  Team2 ", GameInfo.screenHalfWidth * GameInfo.worldScale,
 				15 * GameInfo.worldScale, paint);
 
 		// When there is a goal, we show it in the middle of the screen
 		if (isGoal) {
 			paint.setTextSize(200);
-			canvas.drawText("GOAL!", 56 * GameInfo.worldScale,
+			canvas.drawText("GOAL!", GameInfo.screenHalfWidth * GameInfo.worldScale,
 					45 * GameInfo.worldScale, paint);
 
 		}
