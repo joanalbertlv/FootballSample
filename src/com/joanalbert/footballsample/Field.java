@@ -44,17 +44,21 @@ public class Field {
 		// Initialize all the elements of the game
 		Vec2 gravity = new Vec2(0f, 9.8f);
 		boolean doSleep = true;
-		world = new World(gravity, doSleep);		
+		world = new World(gravity, doSleep);
 		ball = new Ball(world);
-		walls = new Walls(10.0f, 5.0f, GameInfo.screenWidth , GameInfo.screenHeight,
-				world);
+		walls = new Walls(10.0f, 5.0f, GameInfo.screenWidth,
+				GameInfo.screenHeight, world);
 		lGoal = new Goal(true, world);
 		rGoal = new Goal(false, world);
-		
-		myPlayer1 = new Player(GameInfo.screenHalfWidth - 40.0f, GameInfo.screenHalfHeight+10, true, world);
-		myPlayer2 = new Player(GameInfo.screenHalfWidth - 20.0f, GameInfo.screenHalfHeight+10, true, world);
-		pcPlayer1 = new Player(GameInfo.screenHalfWidth + 20.0f, GameInfo.screenHalfHeight+10, false, world);
-		pcPlayer2 = new Player(GameInfo.screenHalfWidth + 40.0f, GameInfo.screenHalfHeight+10, false, world);
+
+		myPlayer1 = new Player(GameInfo.screenHalfWidth - 40.0f,
+				GameInfo.screenHalfHeight + 10, true, world);
+		myPlayer2 = new Player(GameInfo.screenHalfWidth - 20.0f,
+				GameInfo.screenHalfHeight + 10, true, world);
+		pcPlayer1 = new Player(GameInfo.screenHalfWidth + 20.0f,
+				GameInfo.screenHalfHeight + 10, false, world);
+		pcPlayer2 = new Player(GameInfo.screenHalfWidth + 40.0f,
+				GameInfo.screenHalfHeight + 10, false, world);
 	}
 
 	public void create() {
@@ -71,7 +75,7 @@ public class Field {
 			goalCount++;
 			if (goalCount == 300) {
 				// After some cycles showing a goal message, we restart the game
-				isGoal=false;
+				isGoal = false;
 				initialize();
 			}
 		} else {
@@ -170,20 +174,48 @@ public class Field {
 			myCount++;
 
 		// App team
-		// We randomly decide the actions done for the players controlled by the
-		// app
+		// We randomly decide the actions done by the players controlled by the
+		// app, considering some intelligent decisions
+		double probKick = 0.05, probRight = 0.1, probLeft = 0.1, probJump = 0.15;
 		boolean kickPc = false;
 		float fxPc = 0;
 		float fyPc = 0;
 		Random r = new Random();
 		double d = r.nextFloat();
-		if (d < 0.05)
+		// If the ball is on the left of both players, we increase the probability to go left 
+		if (ball.body.getPosition().x < pcPlayer1.torso.getPosition().x
+				&& ball.body.getPosition().x < pcPlayer2.torso.getPosition().x) {
+			probKick = 0.05;
+			probRight = 0.1;
+			probLeft = 0.4;
+			probJump = 0.15;
+		} // If the ball is on the right of both players, we increase the probability to go right 
+		else if (ball.body.getPosition().x > pcPlayer1.torso.getPosition().x
+				&& ball.body.getPosition().x > pcPlayer2.torso.getPosition().x) {
+			probKick = 0.05;
+			probRight = 0.4;
+			probLeft = 0.1;
+			probJump = 0.15;
+		} // If the ball is over one of the players, we increase the probability to jump 
+		else if ((Math.abs(ball.body.getPosition().x
+				- pcPlayer1.torso.getPosition().x) < 10 && ball.body
+				.getPosition().y < pcPlayer1.torso.getPosition().y)
+				|| (Math.abs(ball.body.getPosition().x
+						- pcPlayer2.torso.getPosition().x) < 10 && ball.body
+						.getPosition().y < pcPlayer2.torso.getPosition().y)) {
+			probKick = 0.05;
+			probRight = 0.1;
+			probLeft = 0.1;
+			probJump = 0.4;
+		}
+
+		if (d < probKick)
 			kickPc = true;
-		else if (d < 0.08)
+		else if (d < probKick + probRight)
 			fxPc = 200;
-		else if (d < 0.15)
+		else if (d < probKick + probRight + probLeft)
 			fxPc = -200;
-		else if (d < 0.2)
+		else if (d < probKick + probRight + probLeft + probJump)
 			fyPc = -200;
 
 		// If the players are touching the floor, we apply the forces according
@@ -274,8 +306,8 @@ public class Field {
 		// When there is a goal, we show it in the middle of the screen
 		if (isGoal) {
 			paint.setTextSize(200);
-			canvas.drawText("GOAL!", GameInfo.screenHalfWidth * GameInfo.worldScale,
-					45 * GameInfo.worldScale, paint);
+			canvas.drawText("GOAL!", GameInfo.screenHalfWidth
+					* GameInfo.worldScale, 45 * GameInfo.worldScale, paint);
 
 		}
 
