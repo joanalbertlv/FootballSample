@@ -33,10 +33,10 @@ public class Goal {
 		float x=0; float y=0;
 		this.isLeft = isLeft;
 		if (isLeft){
-			x=20.0f;
+			x=3+(goalWidth/2)+postThickness;
 			y=GameInfo.screenHeight - (goalHeight/2) - postThickness; 
 		}else{
-			x=GameInfo.screenWidth - 10.0f;
+			x=GameInfo.screenWidth - (goalWidth/2) - postThickness-1;
 			y=GameInfo.screenHeight - (goalHeight/2) - postThickness;
 		}
 		

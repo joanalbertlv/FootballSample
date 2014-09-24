@@ -1,15 +1,11 @@
 package com.joanalbert.footballsample;
 
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.contacts.Contact;
-
 import android.app.Activity;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -17,7 +13,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 // This is the main activity which also detects screen contacts
-public class MainActivity extends Activity implements ContactListener {
+public class MainActivity extends Activity {
 
 	private SurfaceView surface;
 	private SurfaceHolder surfaceHolder;
@@ -38,13 +34,13 @@ public class MainActivity extends Activity implements ContactListener {
 		surfaceHolder = surface.getHolder();
 		this.setContentView(surface);
 
-		//Get the size of the screen
+		// Get the size of the screen
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
-		
-		GameInfo.screenWidth=size.x/ 11;
-		GameInfo.screenHeight=size.y/ 13;
+
+		GameInfo.screenWidth = size.x / 10.3f;
+		GameInfo.screenHeight = size.y / 12.3f;
 		GameInfo.screenHalfWidth = (GameInfo.screenWidth / 2);
 		GameInfo.screenHalfHeight = (GameInfo.screenHeight / 2);
 		// Field of the game created
@@ -110,13 +106,14 @@ public class MainActivity extends Activity implements ContactListener {
 	}
 
 	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		int action = MotionEventCompat.getActionMasked(event);
+		switch (action) {
+		case (MotionEvent.ACTION_DOWN):			
 			// If the user touches the screen we store the position
 			x1 = event.getX();
 			y1 = event.getY();
-		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			return true;
+		case (MotionEvent.ACTION_UP):
 			// When the user releases the finger we store the new position
 			x2 = event.getX();
 			y2 = event.getY();
@@ -136,31 +133,10 @@ public class MainActivity extends Activity implements ContactListener {
 					fy = 0;
 				fx = dx * 4;
 			}
+			return true;
+		default:
+			return super.onTouchEvent(event);
 		}
-		return true;
-
-	}
-
-	@Override
-	public void beginContact(Contact arg0) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void endContact(Contact arg0) {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void preSolve(Contact contact, Manifold oldManifold) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void postSolve(Contact contact, ContactImpulse impulse) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

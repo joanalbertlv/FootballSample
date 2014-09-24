@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.util.Log;
 
 import com.joanalbert.footballsample.elements.Ball;
 import com.joanalbert.footballsample.elements.Goal;
@@ -46,18 +47,18 @@ public class Field {
 		boolean doSleep = true;
 		world = new World(gravity, doSleep);
 		ball = new Ball(world);
-		walls = new Walls(10.0f, 5.0f, GameInfo.screenWidth,
+		walls = new Walls(2.0f, 2.0f, GameInfo.screenWidth,
 				GameInfo.screenHeight, world);
 		lGoal = new Goal(true, world);
 		rGoal = new Goal(false, world);
 
-		myPlayer1 = new Player(GameInfo.screenHalfWidth - 40.0f,
+		myPlayer1 = new Player(GameInfo.screenHalfWidth - 20.0f,
 				GameInfo.screenHalfHeight + 10, true, world);
-		myPlayer2 = new Player(GameInfo.screenHalfWidth - 20.0f,
+		myPlayer2 = new Player(GameInfo.screenHalfWidth - 10.0f,
 				GameInfo.screenHalfHeight + 10, true, world);
-		pcPlayer1 = new Player(GameInfo.screenHalfWidth + 20.0f,
+		pcPlayer1 = new Player(GameInfo.screenHalfWidth + 10.0f,
 				GameInfo.screenHalfHeight + 10, false, world);
-		pcPlayer2 = new Player(GameInfo.screenHalfWidth + 40.0f,
+		pcPlayer2 = new Player(GameInfo.screenHalfWidth + 20.0f,
 				GameInfo.screenHalfHeight + 10, false, world);
 	}
 
@@ -105,7 +106,7 @@ public class Field {
 
 		// If the players are touching the floor, we apply the forces according
 		// to the movements of the finger in the screen
-		if (myPlayer1.torso.getPosition().y > 60) {
+		if (myPlayer1.torso.getPosition().y > (0.72 * GameInfo.screenHeight)) {
 			// Detect if the player has fallen
 			if (Math.abs(myPlayer1.head.getPosition().x
 					- myPlayer1.lLeg.getPosition().x) > 20) {
@@ -120,7 +121,7 @@ public class Field {
 			myPlayer1.rLeg.applyLinearImpulse(new Vec2(fx * 2, fy * 2),
 					myPlayer1.rLeg.getPosition());
 		}
-		if (myPlayer2.torso.getPosition().y > 60) {
+		if (myPlayer2.torso.getPosition().y > (0.72 * GameInfo.screenHeight)) {
 			// Detect if the player has fallen
 			if (Math.abs(myPlayer2.head.getPosition().x
 					- myPlayer2.lLeg.getPosition().x) > 20) {
@@ -138,35 +139,37 @@ public class Field {
 
 		// If we have a trigger for a kick, we start the kick counter, and we
 		// perform the first part of the kick
+		//float rateOfKick=0.8f; //186
+		float rateOfKick=GameInfo.screenWidth*0.004f+0.06f;
 		if (kick) {
-			myPlayer1.torso.applyLinearImpulse(new Vec2(-3000, -100),
+			myPlayer1.torso.applyLinearImpulse(new Vec2(-3000*rateOfKick, -100*rateOfKick),
 					myPlayer1.torso.getPosition());
-			myPlayer1.lLeg.applyLinearImpulse(new Vec2(-5000, -1000),
+			myPlayer1.lLeg.applyLinearImpulse(new Vec2(-5000*rateOfKick, -1000*rateOfKick),
 					myPlayer1.lLeg.getPosition());
-			myPlayer1.rLeg.applyLinearImpulse(new Vec2(20000, -1000),
+			myPlayer1.rLeg.applyLinearImpulse(new Vec2(20000*rateOfKick, -1000*rateOfKick),
 					myPlayer1.rLeg.getPosition());
-			myPlayer2.torso.applyLinearImpulse(new Vec2(-3000, -100),
+			myPlayer2.torso.applyLinearImpulse(new Vec2(-3000*rateOfKick, -100*rateOfKick),
 					myPlayer2.torso.getPosition());
-			myPlayer2.lLeg.applyLinearImpulse(new Vec2(-5000, -1000),
+			myPlayer2.lLeg.applyLinearImpulse(new Vec2(-5000*rateOfKick, -1000*rateOfKick),
 					myPlayer2.lLeg.getPosition());
-			myPlayer2.rLeg.applyLinearImpulse(new Vec2(20000, -1000),
+			myPlayer2.rLeg.applyLinearImpulse(new Vec2(20000*rateOfKick, -1000*rateOfKick),
 					myPlayer2.rLeg.getPosition());
 			myCount = 0;
 		}
 		// Some cycles after the beginning of the kick, we perform the second
 		// part
 		if (myCount == 10) {
-			myPlayer1.torso.applyLinearImpulse(new Vec2(4500, 0),
+			myPlayer1.torso.applyLinearImpulse(new Vec2(4500*rateOfKick, 0),
 					myPlayer1.torso.getPosition());
-			myPlayer1.lLeg.applyLinearImpulse(new Vec2(8000, 0),
+			myPlayer1.lLeg.applyLinearImpulse(new Vec2(8000*rateOfKick, 0),
 					myPlayer1.lLeg.getPosition());
-			myPlayer1.rLeg.applyLinearImpulse(new Vec2(-30000, 10000),
+			myPlayer1.rLeg.applyLinearImpulse(new Vec2(-30000*rateOfKick, 10000*rateOfKick),
 					myPlayer1.rLeg.getPosition());
-			myPlayer2.torso.applyLinearImpulse(new Vec2(4500, 0),
+			myPlayer2.torso.applyLinearImpulse(new Vec2(4500*rateOfKick, 0),
 					myPlayer2.torso.getPosition());
-			myPlayer2.lLeg.applyLinearImpulse(new Vec2(8000, 0),
+			myPlayer2.lLeg.applyLinearImpulse(new Vec2(8000*rateOfKick, 0),
 					myPlayer2.lLeg.getPosition());
-			myPlayer2.rLeg.applyLinearImpulse(new Vec2(-30000, 10000),
+			myPlayer2.rLeg.applyLinearImpulse(new Vec2(-30000*rateOfKick, 10000*rateOfKick),
 					myPlayer2.rLeg.getPosition());
 		}
 		// If we still have not finished the kick we increase the counter
@@ -182,21 +185,24 @@ public class Field {
 		float fyPc = 0;
 		Random r = new Random();
 		double d = r.nextFloat();
-		// If the ball is on the left of both players, we increase the probability to go left 
+		// If the ball is on the left of both players, we increase the
+		// probability to go left
 		if (ball.body.getPosition().x < pcPlayer1.torso.getPosition().x
 				&& ball.body.getPosition().x < pcPlayer2.torso.getPosition().x) {
 			probKick = 0.05;
 			probRight = 0.1;
 			probLeft = 0.4;
 			probJump = 0.15;
-		} // If the ball is on the right of both players, we increase the probability to go right 
+		} // If the ball is on the right of both players, we increase the
+			// probability to go right
 		else if (ball.body.getPosition().x > pcPlayer1.torso.getPosition().x
 				&& ball.body.getPosition().x > pcPlayer2.torso.getPosition().x) {
 			probKick = 0.05;
 			probRight = 0.4;
 			probLeft = 0.1;
 			probJump = 0.15;
-		} // If the ball is over one of the players, we increase the probability to jump 
+		} // If the ball is over one of the players, we increase the probability
+			// to jump
 		else if ((Math.abs(ball.body.getPosition().x
 				- pcPlayer1.torso.getPosition().x) < 10 && ball.body
 				.getPosition().y < pcPlayer1.torso.getPosition().y)
@@ -254,33 +260,33 @@ public class Field {
 		// perform the first part of the kick
 		if (kickPc) {
 			pcCount = 0;
-			pcPlayer1.torso.applyLinearImpulse(new Vec2(3000, -100),
+			pcPlayer1.torso.applyLinearImpulse(new Vec2(3000*rateOfKick, -100*rateOfKick),
 					pcPlayer1.torso.getPosition());
-			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(5000, -1000),
+			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(5000*rateOfKick, -1000*rateOfKick),
 					pcPlayer1.lLeg.getPosition());
-			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(-20000, -1000),
+			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(-20000*rateOfKick, -1000*rateOfKick),
 					pcPlayer1.rLeg.getPosition());
-			pcPlayer2.torso.applyLinearImpulse(new Vec2(3000, -100),
+			pcPlayer2.torso.applyLinearImpulse(new Vec2(3000*rateOfKick, -100*rateOfKick),
 					pcPlayer2.torso.getPosition());
-			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(5000, -1000),
+			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(5000*rateOfKick, -1000*rateOfKick),
 					pcPlayer2.lLeg.getPosition());
-			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(-20000, -1000),
+			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(-20000*rateOfKick, -1000*rateOfKick),
 					pcPlayer2.rLeg.getPosition());
 		}
 		// Some cycles after the beginning of the kick, we perform the second
 		// part
 		if (pcCount == 10) {
-			pcPlayer1.torso.applyLinearImpulse(new Vec2(-4500, 0),
+			pcPlayer1.torso.applyLinearImpulse(new Vec2(-4500*rateOfKick, 0),
 					pcPlayer1.torso.getPosition());
-			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(-8000, 0),
+			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(-8000*rateOfKick, 0),
 					pcPlayer1.lLeg.getPosition());
-			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(30000, 10000),
+			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(30000*rateOfKick, 10000*rateOfKick),
 					pcPlayer1.rLeg.getPosition());
-			pcPlayer2.torso.applyLinearImpulse(new Vec2(-4500, 0),
+			pcPlayer2.torso.applyLinearImpulse(new Vec2(-4500*rateOfKick, 0),
 					pcPlayer2.torso.getPosition());
-			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(-8000, 0),
+			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(-8000*rateOfKick, 0),
 					pcPlayer2.lLeg.getPosition());
-			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(+30000, 10000),
+			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(+30000*rateOfKick, 10000*rateOfKick),
 					pcPlayer2.rLeg.getPosition());
 		}
 
