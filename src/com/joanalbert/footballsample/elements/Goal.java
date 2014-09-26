@@ -26,18 +26,18 @@ public class Goal {
 	public Body bGoalTop; // The top part of the goal
 
 	public Goal(boolean isLeft, World world) {
-		goalHeight = GameInfo.screenHeight/2.5f;
-		goalWidth = GameInfo.screenWidth/13f;
-		postThickness = GameInfo.screenWidth/174f;
+		goalHeight = GameInfo.worldHeight/2.5f;
+		goalWidth = GameInfo.worldWidth/13f;
+		postThickness = GameInfo.worldWidth/174f;
 	
 		float x=0; float y=0;
 		this.isLeft = isLeft;
 		if (isLeft){
 			x=3+(goalWidth/2)+postThickness;
-			y=GameInfo.screenHeight - (goalHeight/2) - postThickness; 
+			y=GameInfo.worldHeight - (goalHeight/2) - postThickness; 
 		}else{
-			x=GameInfo.screenWidth - (goalWidth/2) - postThickness-1;
-			y=GameInfo.screenHeight - (goalHeight/2) - postThickness;
+			x=GameInfo.worldWidth - (goalWidth/2) - postThickness-1;
+			y=GameInfo.worldHeight - (goalHeight/2) - postThickness;
 		}
 		
 		PolygonShape groundBox;

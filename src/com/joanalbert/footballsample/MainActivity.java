@@ -39,10 +39,16 @@ public class MainActivity extends Activity {
 		Point size = new Point();
 		display.getSize(size);
 
-		GameInfo.screenWidth = size.x / 10.3f;
-		GameInfo.screenHeight = size.y / 12.3f;
-		GameInfo.screenHalfWidth = (GameInfo.screenWidth / 2);
-		GameInfo.screenHalfHeight = (GameInfo.screenHeight / 2);
+		// The scale to transform the virtual world into the real device screen
+		// is increased as much as possible
+		GameInfo.deviceScreenWidth = size.x;
+		GameInfo.deviceScreenHeight = size.y;
+		while (GameInfo.deviceScreenWidth > (GameInfo.worldScale + 1)
+				* GameInfo.worldWidth
+				&& GameInfo.deviceScreenHeight > (GameInfo.worldScale + 1)
+						* GameInfo.worldHeight)
+			GameInfo.worldScale++;
+
 		// Field of the game created
 		field = new Field();
 		field.create();
@@ -108,7 +114,7 @@ public class MainActivity extends Activity {
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = MotionEventCompat.getActionMasked(event);
 		switch (action) {
-		case (MotionEvent.ACTION_DOWN):			
+		case (MotionEvent.ACTION_DOWN):
 			// If the user touches the screen we store the position
 			x1 = event.getX();
 			y1 = event.getY();
@@ -127,11 +133,13 @@ public class MainActivity extends Activity {
 				// If the user has dragged the finger, then we store two forces
 				// x and y that will be applied to the players. Positive Y-force
 				// not allowed.
-				if (dy < 0)
-					fy = dy * 4;
-				else
+				if (Math.abs(dx) < Math.abs(dy)){
+					fy = -2000*GameInfo.movementRate; fx=0;
+				} else {
 					fy = 0;
-				fx = dx * 4;
+					if (dx>0) fx = 2000*GameInfo.movementRate;
+					else fx = -2000*GameInfo.movementRate;
+				}				
 			}
 			return true;
 		default:

@@ -45,14 +45,19 @@ public class Player {
 	// Joints between torso and legs/arms/head
 	public RevoluteJointDef lLRjd, rLRjd, lARjd, rARjd, hRjd;
 
+	// Returns the height of the center of the head of the player
+	public static float getPlayerHeadHeight(){
+		return legHeight + torsoHeight + headRadius;
+	}
+	
 	public Player(float x, float y, boolean isMyPlayer, World world) {
-		torsoWidth = GameInfo.screenWidth/25.0f;
-		torsoHeight =  GameInfo.screenHeight/6.5f;
-		legWidth = GameInfo.screenWidth/58.0f;
-		legHeight = GameInfo.screenHeight/8.3f;
-		armWidth = GameInfo.screenWidth/87f;
-		armHeight = GameInfo.screenHeight/9f;
-		headRadius = GameInfo.screenWidth / 58f;
+		torsoWidth = GameInfo.worldWidth/25.0f;
+		torsoHeight =  GameInfo.worldHeight/6.5f;
+		legWidth = GameInfo.worldWidth/58.0f;
+		legHeight = GameInfo.worldHeight/8.3f;
+		armWidth = GameInfo.worldWidth/87f;
+		armHeight = GameInfo.worldHeight/9f;
+		headRadius = GameInfo.worldWidth / 58f;
 		
 		this.isMyPlayer = isMyPlayer;
 
@@ -68,7 +73,7 @@ public class Player {
 		polygon.setAsBox(torsoWidth / 2, torsoHeight / 2);
 
 		FixtureDef fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.5f*GameInfo.densityRate;
 		fDef.shape = polygon;
 		torso.createFixture(fDef);
 
@@ -86,7 +91,7 @@ public class Player {
 		polygon = new PolygonShape();
 		polygon.setAsBox(legWidth / 2, legHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 15;
+		fDef.density = 15*GameInfo.densityRate;
 		fDef.shape = polygon;
 		lLeg.createFixture(fDef);
 
@@ -104,7 +109,7 @@ public class Player {
 		polygon = new PolygonShape();
 		polygon.setAsBox(legWidth / 2, legHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 15;
+		fDef.density = 15*GameInfo.densityRate;
 		fDef.shape = polygon;
 		rLeg.createFixture(fDef);
 
@@ -117,7 +122,7 @@ public class Player {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.5f*GameInfo.densityRate;
 		fDef.shape = polygon;
 		lArm.createFixture(fDef);
 
@@ -130,7 +135,7 @@ public class Player {
 		polygon = new PolygonShape();
 		polygon.setAsBox(armWidth / 2, armHeight / 2);
 		fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.5f*GameInfo.densityRate;
 		fDef.shape = polygon;
 		rArm.createFixture(fDef);
 
@@ -144,7 +149,7 @@ public class Player {
 		circle.m_radius = headRadius;
 
 		fDef = new FixtureDef();
-		fDef.density = 0.5f;
+		fDef.density = 0.5f*GameInfo.densityRate;
 		fDef.shape = circle;
 		head.createFixture(fDef);
 

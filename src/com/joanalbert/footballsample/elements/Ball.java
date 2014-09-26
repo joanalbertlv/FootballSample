@@ -23,9 +23,9 @@ public class Ball {
 	public Body body;
 
 	public Ball(World world) {
-		float x = GameInfo.screenHalfWidth;
-		float y = GameInfo.screenHalfHeight;
-		ballRadius = GameInfo.screenWidth / 58;
+		float x = GameInfo.worldWidth/2;
+		float y = GameInfo.worldHeight/2;
+		ballRadius = GameInfo.worldWidth / 58;
 
 		// Definition of the body and its properties
 		BodyDef bodyDef = new BodyDef();
@@ -39,7 +39,7 @@ public class Ball {
 
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = circle;
-		fixtureDef.density = 0.1f;
+		fixtureDef.density = 0.1f*GameInfo.densityRate;
 		fixtureDef.friction = 0.7f;
 		fixtureDef.restitution = 0.8f;
 
