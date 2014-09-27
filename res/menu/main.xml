@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.joanalbert.footballsample.MainActivity" >
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never"/>
-
+     <item
+        android:id="@+id/preferencemenu"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:orderInCategory="95"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_settings"/>
+    
 </menu>

@@ -9,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.util.Log;
 
 import com.joanalbert.footballsample.elements.Ball;
 import com.joanalbert.footballsample.elements.Goal;
@@ -43,7 +42,7 @@ public class Field {
 
 	private void initialize() {
 		// Initialize all the elements of the game
-		Vec2 gravity = new Vec2(0f, 20f); // Gravity value chosen after several
+		Vec2 gravity = new Vec2(0f, 15f); // Gravity value chosen after several
 											// tests
 		boolean doSleep = true;
 		world = new World(gravity, doSleep);
@@ -68,11 +67,11 @@ public class Field {
 	}
 
 	// Counters used for long actions (kick, goal animation, etc.)
-	int myCount = 1000, pcCount = 1000, goalCount = 1000;
+	int myCount = 1000, myAutoCount = 1000, pcCount = 1000, goalCount = 1000;
 
 	// Depending on the angle of the torso and the position of the head it
 	// decides if a player has fallen
-	public boolean playerHasFallen(Player p) {
+	private boolean playerHasFallen(Player p) {
 		float headNormalPosition = (GameInfo.worldHeight - Player
 				.getPlayerHeadHeight());
 
@@ -80,8 +79,402 @@ public class Field {
 				.getPosition().y) > headNormalPosition);
 	}
 
+	// Strategy of the team controlled by the user
+	private void myTeamStrategy(Player p1, Player p2, boolean kick, float fx,
+			float fy) {
+		// If the players are touching the floor, we apply the forces according
+		// to the movements of the finger in the screen
+		if (p1.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p1)) {
+				// Try to recover position
+				p1.torso.applyLinearImpulse(new Vec2(0, -10000
+						* GameInfo.forceRate), p1.torso.getPosition());
+			}
+			p1.torso.applyLinearImpulse(new Vec2(fx * GameInfo.forceRate, fy
+					* GameInfo.forceRate), p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(fx * 2 * GameInfo.forceRate, fy
+					* 2 * GameInfo.forceRate), p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(fx * 2 * GameInfo.forceRate, fy
+					* 2 * GameInfo.forceRate), p1.rLeg.getPosition());
+		}
+		if (p2.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p2)) {
+				// Try to recover position
+				p2.torso.applyLinearImpulse(new Vec2(0 * GameInfo.forceRate,
+						-10000 * GameInfo.forceRate), p2.torso.getPosition());
+			}
+			p2.torso.applyLinearImpulse(new Vec2(fx * GameInfo.forceRate, fy
+					* GameInfo.forceRate), p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(fx * 2 * GameInfo.forceRate, fy
+					* 2 * GameInfo.forceRate), p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(fx * 2 * GameInfo.forceRate, fy
+					* 2 * GameInfo.forceRate), p2.rLeg.getPosition());
+		}
+
+		// If we have a trigger for a kick, we start the kick counter, and we
+		// perform the first part of the kick
+		if (kick) {
+			p1.torso.applyLinearImpulse(new Vec2(-3000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -100 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(-5000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -1000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(20000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -1000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(new Vec2(-3000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -100 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(-5000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -1000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(20000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, -1000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p2.rLeg.getPosition());
+			myCount = 0;
+		}
+		// Some cycles after the beginning of the kick, we perform the second
+		// part
+		if (myCount == 10) {
+			p1.torso.applyLinearImpulse(new Vec2(4500 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 0), p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(8000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 0), p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(-30000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 10000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(new Vec2(4500 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 0), p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(8000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 0), p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(-30000 * GameInfo.rateOfKick
+					* GameInfo.forceRate, 10000 * GameInfo.rateOfKick
+					* GameInfo.forceRate), p2.rLeg.getPosition());
+		}
+		// If we still have not finished the kick we increase the counter
+		if (myCount < 20)
+			myCount++;
+	}
+
+	// Strategy of the team controlled by the pc
+	private void pcTeamStrategy(Player p1, Player p2) {
+		double probKick = 0.05, probRight = 0.1, probLeft = 0.1, probJump = 0.15;
+		boolean kickPc = false;
+		float fxPc = 0;
+		float fyPc = 0;
+		Random r = new Random();
+		double d = r.nextFloat();
+		// If the ball is on the left of one of the players, we will try to
+		// score
+		if (ball.body.getPosition().x < p1.torso.getPosition().x
+				|| ball.body.getPosition().x < p2.torso.getPosition().x) {
+			// If the ball is accessible to one of the players, we increase the
+			// probability to go left and kick in order to score
+			if (ball.body.getPosition().y > p1.head.getPosition().y
+					|| ball.body.getPosition().y > p2.head.getPosition().y) {
+				probKick = 0.1;
+				probRight = 0.0;
+				probLeft = 0.5;
+				probJump = 0.0;
+			}
+			// If not accessible to the players, we increase the probability to
+			// wait
+			else {
+				probKick = 0.1;
+				probRight = 0.08;
+				probLeft = 0.1;
+				probJump = 0.08;
+			}
+			// Otherwise, if the ball is on the right of both players, we will
+			// try to save the goal
+		} else if (ball.body.getPosition().x > p1.torso.getPosition().x
+				&& ball.body.getPosition().x > p2.torso.getPosition().x) {
+			// If the ball is accessible to one of the players, we increase the
+			// probability to wait because we do not want to score in our own
+			// goal
+			if (ball.body.getPosition().y > p1.head.getPosition().y
+					|| ball.body.getPosition().y > p2.head.getPosition().y) {
+				probKick = 0.05;
+				probRight = 0.0;
+				probLeft = 0.05;
+				probJump = 0.05;
+			}
+			// If not accessible to the players, we increase the probability to
+			// go right in order to be between the ball and our goal
+			else {
+				probKick = 0.01;
+				probRight = 0.5;
+				probLeft = 0.0;
+				probJump = 0.0;
+			}
+
+		}
+
+		// In any case, if the ball is over one of the players, we increase the
+		// probability
+		// to jump
+		if ((Math.abs(ball.body.getPosition().x - p1.torso.getPosition().x) < 10 && ball.body
+				.getPosition().y < p1.torso.getPosition().y)
+				|| (Math.abs(ball.body.getPosition().x
+						- p2.torso.getPosition().x) < 10 && ball.body
+						.getPosition().y < p2.torso.getPosition().y)) {
+			probKick = 0.05;
+			probRight = 0.1;
+			probLeft = 0.1;
+			probJump = 0.4;
+		}
+
+		if (d < probKick)
+			kickPc = true;
+		else if (d < probKick + probRight)
+			fxPc = 200;
+		else if (d < probKick + probRight + probLeft)
+			fxPc = -200;
+		else if (d < probKick + probRight + probLeft + probJump)
+			fyPc = -200;
+		else {
+			fxPc = 0;
+			fyPc = 0;
+		}
+
+		// If the players are touching the floor, we apply the forces according
+		// to the movements decided before
+		if (p1.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p1)) {
+				// Try to recover position
+				p1.torso.applyLinearImpulse(new Vec2(0, -10000),
+						p1.torso.getPosition());
+			}
+			p1.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
+					p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p1.rLeg.getPosition());
+		}
+		if (p2.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p2)) {
+				// Try to recover position
+				p2.torso.applyLinearImpulse(new Vec2(0, -10000),
+						p2.torso.getPosition());
+			}
+			p2.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
+					p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p2.rLeg.getPosition());
+		}
+		// If we have a trigger for a kick, we start the kick counter, and we
+		// perform the first part of the kick
+		if (kickPc) {
+			pcCount = 0;
+			p1.torso.applyLinearImpulse(new Vec2(3000 * GameInfo.rateOfKick,
+					-100 * GameInfo.rateOfKick), p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(5000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(-20000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(new Vec2(3000 * GameInfo.rateOfKick,
+					-100 * GameInfo.rateOfKick), p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(5000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(-20000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p2.rLeg.getPosition());
+		}
+		// Some cycles after the beginning of the kick, we perform the second
+		// part
+		if (pcCount == 10) {
+			p1.torso.applyLinearImpulse(
+					new Vec2(-4500 * GameInfo.rateOfKick, 0),
+					p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(
+					new Vec2(-8000 * GameInfo.rateOfKick, 0),
+					p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(30000 * GameInfo.rateOfKick,
+					10000 * GameInfo.rateOfKick), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(
+					new Vec2(-4500 * GameInfo.rateOfKick, 0),
+					p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(
+					new Vec2(-8000 * GameInfo.rateOfKick, 0),
+					p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(+30000 * GameInfo.rateOfKick,
+					10000 * GameInfo.rateOfKick), p2.rLeg.getPosition());
+		}
+
+		// If we still have not finished the kick we increase the counter
+		if (pcCount < 20)
+			pcCount++;
+	}
+
+	// Strategy of the team controlled by the pc
+	private void myAutomaticTeamStrategy(Player p1, Player p2) {
+		double probKick = 0.05, probRight = 0.1, probLeft = 0.1, probJump = 0.15;
+		boolean kickPc = false;
+		float fxPc = 0;
+		float fyPc = 0;
+		Random r = new Random();
+		double d = r.nextFloat();
+		// If the ball is on the left of one of the players, we will try to
+		// score
+		if (ball.body.getPosition().x > p1.torso.getPosition().x
+				|| ball.body.getPosition().x > p2.torso.getPosition().x) {
+			// If the ball is accessible to one of the players, we increase the
+			// probability to go left and kick in order to score
+			if (ball.body.getPosition().y > p1.head.getPosition().y
+					|| ball.body.getPosition().y > p2.head.getPosition().y) {
+				probKick = 0.1;
+				probRight = 0.5;
+				probLeft = 0.0;
+				probJump = 0.0;
+			}
+			// If not accessible to the players, we increase the probability to
+			// wait
+			else {
+				probKick = 0.1;
+				probRight = 0.1;
+				probLeft = 0.08;
+				probJump = 0.08;
+			}
+			// Otherwise, if the ball is on the right of both players, we will
+			// try to save the goal
+		} else if (ball.body.getPosition().x < p1.torso.getPosition().x
+				&& ball.body.getPosition().x < p2.torso.getPosition().x) {
+			// If the ball is accessible to one of the players, we increase the
+			// probability to wait because we do not want to score in our own
+			// goal
+			if (ball.body.getPosition().y > p1.head.getPosition().y
+					|| ball.body.getPosition().y > p2.head.getPosition().y) {
+				probKick = 0.05;
+				probRight = 0.05;
+				probLeft = 0.0;
+				probJump = 0.05;
+			}
+			// If not accessible to the players, we increase the probability to
+			// go right in order to be between the ball and our goal
+			else {
+				probKick = 0.01;
+				probRight = 0.0;
+				probLeft = 0.5;
+				probJump = 0.0;
+			}
+
+		}
+
+		// In any case, if the ball is over one of the players, we increase the
+		// probability
+		// to jump
+		if ((Math.abs(ball.body.getPosition().x - p1.torso.getPosition().x) < 10 && ball.body
+				.getPosition().y < p1.torso.getPosition().y)
+				|| (Math.abs(ball.body.getPosition().x
+						- p2.torso.getPosition().x) < 10 && ball.body
+						.getPosition().y < p2.torso.getPosition().y)) {
+			probKick = 0.05;
+			probRight = 0.1;
+			probLeft = 0.1;
+			probJump = 0.4;
+		}
+
+		if (d < probKick)
+			kickPc = true;
+		else if (d < probKick + probRight)
+			fxPc = 200;
+		else if (d < probKick + probRight + probLeft)
+			fxPc = -200;
+		else if (d < probKick + probRight + probLeft + probJump)
+			fyPc = -200;
+		else {
+			fxPc = 0;
+			fyPc = 0;
+		}
+
+		// If the players are touching the floor, we apply the forces according
+		// to the movements decided before
+		if (p1.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p1)) {
+				// Try to recover position
+				p1.torso.applyLinearImpulse(new Vec2(0, -10000),
+						p1.torso.getPosition());
+			}
+			p1.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
+					p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p1.rLeg.getPosition());
+		}
+		if (p2.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
+			// Detect if the player has fallen
+			if (playerHasFallen(p2)) {
+				// Try to recover position
+				p2.torso.applyLinearImpulse(new Vec2(0, -10000),
+						p2.torso.getPosition());
+			}
+			p2.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
+					p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
+					p2.rLeg.getPosition());
+		}
+		// If we have a trigger for a kick, we start the kick counter, and we
+		// perform the first part of the kick
+		if (kickPc) {
+			myAutoCount = 0;
+			p1.torso.applyLinearImpulse(new Vec2(-3000 * GameInfo.rateOfKick,
+					-100 * GameInfo.rateOfKick), p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(-5000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(20000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(new Vec2(-3000 * GameInfo.rateOfKick,
+					-100 * GameInfo.rateOfKick), p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(-5000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(20000 * GameInfo.rateOfKick,
+					-1000 * GameInfo.rateOfKick), p2.rLeg.getPosition());
+		}
+		// Some cycles after the beginning of the kick, we perform the second
+		// part
+		if (myAutoCount == 10) {
+			p1.torso.applyLinearImpulse(
+					new Vec2(4500 * GameInfo.rateOfKick, 0),
+					p1.torso.getPosition());
+			p1.lLeg.applyLinearImpulse(new Vec2(8000 * GameInfo.rateOfKick, 0),
+					p1.lLeg.getPosition());
+			p1.rLeg.applyLinearImpulse(new Vec2(-30000 * GameInfo.rateOfKick,
+					10000 * GameInfo.rateOfKick), p1.rLeg.getPosition());
+			p2.torso.applyLinearImpulse(
+					new Vec2(4500 * GameInfo.rateOfKick, 0),
+					p2.torso.getPosition());
+			p2.lLeg.applyLinearImpulse(new Vec2(8000 * GameInfo.rateOfKick, 0),
+					p2.lLeg.getPosition());
+			p2.rLeg.applyLinearImpulse(new Vec2(-30000 * GameInfo.rateOfKick,
+					10000 * GameInfo.rateOfKick), p2.rLeg.getPosition());
+		}
+
+		// If we still have not finished the kick we increase the counter
+		if (myAutoCount < 20)
+			myAutoCount++;
+	}
+
 	// Logic of the game
 	public void update(long time, boolean kick, float fx, float fy) {
+		// Move the ball if it is over a goal because it may be stuck
+		if (lGoal.isItOverTheGoal(ball.body.getPosition()))
+			ball.body.applyLinearImpulse(new Vec2(1, 0),
+					ball.body.getPosition());
+		if (rGoal.isItOverTheGoal(ball.body.getPosition()))
+			ball.body.applyLinearImpulse(new Vec2(-1, 0),
+					ball.body.getPosition());
+
 		// If there has been a goal recently
 		if (isGoal) {
 			goalCount++;
@@ -111,243 +504,24 @@ public class Field {
 		}
 
 		// My team
-		// In the case of the players controlled by the user, we receive the
-		// game actions as parameters of this function, depending on the actions
-		// performed in the screen.
+		boolean control;
 
-		// If the players are touching the floor, we apply the forces according
-		// to the movements of the finger in the screen
-		if (myPlayer1.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
-			// Detect if the player has fallen
-			if (playerHasFallen(myPlayer1)) {
-				// Try to recover position
-				myPlayer1.torso.applyLinearImpulse(new Vec2(0, -10000
-						* GameInfo.forceRate), myPlayer1.torso.getPosition());
-			}
-			myPlayer1.torso.applyLinearImpulse(new Vec2(
-					fx * GameInfo.forceRate, fy * GameInfo.forceRate),
-					myPlayer1.torso.getPosition());
-			myPlayer1.lLeg.applyLinearImpulse(new Vec2(fx * 2
-					* GameInfo.forceRate, fy * 2 * GameInfo.forceRate),
-					myPlayer1.lLeg.getPosition());
-			myPlayer1.rLeg.applyLinearImpulse(new Vec2(fx * 2
-					* GameInfo.forceRate, fy * 2 * GameInfo.forceRate),
-					myPlayer1.rLeg.getPosition());
-		}
-		if (myPlayer2.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
-			// Detect if the player has fallen
-			if (playerHasFallen(myPlayer2)) {
-				// Try to recover position
-				myPlayer2.torso.applyLinearImpulse(new Vec2(
-						0 * GameInfo.forceRate, -10000 * GameInfo.forceRate),
-						myPlayer2.torso.getPosition());
-			}
-			myPlayer2.torso.applyLinearImpulse(new Vec2(
-					fx * GameInfo.forceRate, fy * GameInfo.forceRate),
-					myPlayer2.torso.getPosition());
-			myPlayer2.lLeg.applyLinearImpulse(new Vec2(fx * 2
-					* GameInfo.forceRate, fy * 2 * GameInfo.forceRate),
-					myPlayer2.lLeg.getPosition());
-			myPlayer2.rLeg.applyLinearImpulse(new Vec2(fx * 2
-					* GameInfo.forceRate, fy * 2 * GameInfo.forceRate),
-					myPlayer2.rLeg.getPosition());
-		}
-
-		// If we have a trigger for a kick, we start the kick counter, and we
-		// perform the first part of the kick
-		float rateOfKick = 0.5f; // Strength of the kick
-		if (kick) {
-			myPlayer1.torso.applyLinearImpulse(new Vec2(-3000 * rateOfKick
-					* GameInfo.forceRate, -100 * rateOfKick
-					* GameInfo.forceRate), myPlayer1.torso.getPosition());
-			myPlayer1.lLeg.applyLinearImpulse(new Vec2(-5000 * rateOfKick
-					* GameInfo.forceRate, -1000 * rateOfKick
-					* GameInfo.forceRate), myPlayer1.lLeg.getPosition());
-			myPlayer1.rLeg.applyLinearImpulse(new Vec2(20000 * rateOfKick
-					* GameInfo.forceRate, -1000 * rateOfKick
-					* GameInfo.forceRate), myPlayer1.rLeg.getPosition());
-			myPlayer2.torso.applyLinearImpulse(new Vec2(-3000 * rateOfKick
-					* GameInfo.forceRate, -100 * rateOfKick
-					* GameInfo.forceRate), myPlayer2.torso.getPosition());
-			myPlayer2.lLeg.applyLinearImpulse(new Vec2(-5000 * rateOfKick
-					* GameInfo.forceRate, -1000 * rateOfKick
-					* GameInfo.forceRate), myPlayer2.lLeg.getPosition());
-			myPlayer2.rLeg.applyLinearImpulse(new Vec2(20000 * rateOfKick
-					* GameInfo.forceRate, -1000 * rateOfKick
-					* GameInfo.forceRate), myPlayer2.rLeg.getPosition());
-			myCount = 0;
-		}
-		// Some cycles after the beginning of the kick, we perform the second
-		// part
-		if (myCount == 10) {
-			myPlayer1.torso.applyLinearImpulse(new Vec2(4500 * rateOfKick
-					* GameInfo.forceRate, 0), myPlayer1.torso.getPosition());
-			myPlayer1.lLeg.applyLinearImpulse(new Vec2(8000 * rateOfKick
-					* GameInfo.forceRate, 0), myPlayer1.lLeg.getPosition());
-			myPlayer1.rLeg.applyLinearImpulse(new Vec2(-30000 * rateOfKick
-					* GameInfo.forceRate, 10000 * rateOfKick
-					* GameInfo.forceRate), myPlayer1.rLeg.getPosition());
-			myPlayer2.torso.applyLinearImpulse(new Vec2(4500 * rateOfKick
-					* GameInfo.forceRate, 0), myPlayer2.torso.getPosition());
-			myPlayer2.lLeg.applyLinearImpulse(new Vec2(8000 * rateOfKick
-					* GameInfo.forceRate, 0), myPlayer2.lLeg.getPosition());
-			myPlayer2.rLeg.applyLinearImpulse(new Vec2(-30000 * rateOfKick
-					* GameInfo.forceRate, 10000 * rateOfKick
-					* GameInfo.forceRate), myPlayer2.rLeg.getPosition());
-		}
-		// If we still have not finished the kick we increase the counter
-		if (myCount < 20)
-			myCount++;
+		control = MainActivity.pref.getBoolean("prefMyTeamStrategy", true);
+		if (control)
+			// In the case of the players controlled by the user, we receive the
+			// game actions as parameters of this function, depending on the
+			// actions
+			// performed in the screen.
+			myTeamStrategy(myPlayer1, myPlayer2, kick, fx, fy);
+		else
+			// In the case of the players controlled by the app, we randomly
+			// decide the actions done considering some intelligent decisions
+			myAutomaticTeamStrategy(myPlayer1, myPlayer2);
 
 		// App team
 		// We randomly decide the actions done by the players controlled by the
 		// app, considering some intelligent decisions
-		double probKick = 0.05, probRight = 0.1, probLeft = 0.1, probJump = 0.15;
-		boolean kickPc = false;
-		float fxPc = 0;
-		float fyPc = 0;
-		Random r = new Random();
-		double d = r.nextFloat();
-		// If the ball is on the left of one of the players, we will try to
-		// score
-		if (ball.body.getPosition().x < pcPlayer1.torso.getPosition().x
-				|| ball.body.getPosition().x < pcPlayer2.torso.getPosition().x) {
-			// If the ball is accessible to one of the players, we increase the
-			// probability to go left and kick in order to score
-			if (ball.body.getPosition().y > pcPlayer1.head.getPosition().y
-					|| ball.body.getPosition().y > pcPlayer2.head.getPosition().y) {
-				probKick = 0.1;
-				probRight = 0.0;
-				probLeft = 0.5;
-				probJump = 0.0;
-			}
-			// If not accessible to the players, we increase the probability to
-			// wait
-			else {
-				probKick = 0.1;
-				probRight = 0.08;
-				probLeft = 0.1;
-				probJump = 0.08;
-			}
-			// Otherwise, if the ball is on the right of both players, we will
-			// try to save the goal
-		} else if (ball.body.getPosition().x > pcPlayer1.torso.getPosition().x
-				&& ball.body.getPosition().x > pcPlayer2.torso.getPosition().x) {
-			// If the ball is accessible to one of the players, we increase the
-			// probability to wait because we do not want to score in our own goal
-			if (ball.body.getPosition().y > pcPlayer1.head.getPosition().y
-					|| ball.body.getPosition().y > pcPlayer2.head.getPosition().y) {
-				probKick = 0.05;
-				probRight = 0.0;
-				probLeft = 0.05;
-				probJump = 0.05;
-			}
-			// If not accessible to the players, we increase the probability to
-			// go right in order to be between the ball and our goal
-			else {
-				probKick = 0.01;
-				probRight = 0.5;
-				probLeft = 0.0;
-				probJump = 0.0;
-			}
-
-		}
-
-		// In any case, if the ball is over one of the players, we increase the
-		// probability
-		// to jump
-		if ((Math.abs(ball.body.getPosition().x
-				- pcPlayer1.torso.getPosition().x) < 10 && ball.body
-				.getPosition().y < pcPlayer1.torso.getPosition().y)
-				|| (Math.abs(ball.body.getPosition().x
-						- pcPlayer2.torso.getPosition().x) < 10 && ball.body
-						.getPosition().y < pcPlayer2.torso.getPosition().y)) {
-			probKick = 0.05;
-			probRight = 0.1;
-			probLeft = 0.1;
-			probJump = 0.4;
-		}
-
-		if (d < probKick)
-			kickPc = true;
-		else if (d < probKick + probRight)
-			fxPc = 200;
-		else if (d < probKick + probRight + probLeft)
-			fxPc = -200;
-		else if (d < probKick + probRight + probLeft + probJump)
-			fyPc = -200;
-		else {
-			fx = 0;
-			fy = 0;
-		}
-
-		// If the players are touching the floor, we apply the forces according
-		// to the movements decided before
-		if (pcPlayer1.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
-			// Detect if the player has fallen
-			if (playerHasFallen(pcPlayer1)) {
-				// Try to recover position
-				pcPlayer1.torso.applyLinearImpulse(new Vec2(0, -10000),
-						pcPlayer1.torso.getPosition());
-			}
-			pcPlayer1.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
-					pcPlayer1.torso.getPosition());
-			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
-					pcPlayer1.lLeg.getPosition());
-			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
-					pcPlayer1.rLeg.getPosition());
-		}
-		if (pcPlayer2.torso.getPosition().y > (0.72 * GameInfo.worldHeight)) {
-			// Detect if the player has fallen
-			if (playerHasFallen(pcPlayer2)) {
-				// Try to recover position
-				pcPlayer2.torso.applyLinearImpulse(new Vec2(0, -10000),
-						pcPlayer2.torso.getPosition());
-			}
-			pcPlayer2.torso.applyLinearImpulse(new Vec2(fxPc, fyPc),
-					pcPlayer2.torso.getPosition());
-			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
-					pcPlayer2.lLeg.getPosition());
-			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(fxPc * 2, fyPc * 2),
-					pcPlayer2.rLeg.getPosition());
-		}
-		// If we have a trigger for a kick, we start the kick counter, and we
-		// perform the first part of the kick
-		if (kickPc) {
-			pcCount = 0;
-			pcPlayer1.torso.applyLinearImpulse(new Vec2(3000 * rateOfKick, -100
-					* rateOfKick), pcPlayer1.torso.getPosition());
-			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(5000 * rateOfKick, -1000
-					* rateOfKick), pcPlayer1.lLeg.getPosition());
-			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(-20000 * rateOfKick,
-					-1000 * rateOfKick), pcPlayer1.rLeg.getPosition());
-			pcPlayer2.torso.applyLinearImpulse(new Vec2(3000 * rateOfKick, -100
-					* rateOfKick), pcPlayer2.torso.getPosition());
-			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(5000 * rateOfKick, -1000
-					* rateOfKick), pcPlayer2.lLeg.getPosition());
-			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(-20000 * rateOfKick,
-					-1000 * rateOfKick), pcPlayer2.rLeg.getPosition());
-		}
-		// Some cycles after the beginning of the kick, we perform the second
-		// part
-		if (pcCount == 10) {
-			pcPlayer1.torso.applyLinearImpulse(new Vec2(-4500 * rateOfKick, 0),
-					pcPlayer1.torso.getPosition());
-			pcPlayer1.lLeg.applyLinearImpulse(new Vec2(-8000 * rateOfKick, 0),
-					pcPlayer1.lLeg.getPosition());
-			pcPlayer1.rLeg.applyLinearImpulse(new Vec2(30000 * rateOfKick,
-					10000 * rateOfKick), pcPlayer1.rLeg.getPosition());
-			pcPlayer2.torso.applyLinearImpulse(new Vec2(-4500 * rateOfKick, 0),
-					pcPlayer2.torso.getPosition());
-			pcPlayer2.lLeg.applyLinearImpulse(new Vec2(-8000 * rateOfKick, 0),
-					pcPlayer2.lLeg.getPosition());
-			pcPlayer2.rLeg.applyLinearImpulse(new Vec2(+30000 * rateOfKick,
-					10000 * rateOfKick), pcPlayer2.rLeg.getPosition());
-		}
-
-		// If we still have not finished the kick we increase the counter
-		if (pcCount < 20)
-			pcCount++;
+		pcTeamStrategy(pcPlayer1, pcPlayer2);
 
 		// One step more
 		world.step(time / 1000.0f, velocityIterations, positionIterations);

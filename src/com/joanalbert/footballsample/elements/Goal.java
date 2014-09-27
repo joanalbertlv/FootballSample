@@ -65,7 +65,17 @@ public class Goal {
 		groundBox = new PolygonShape();
 		groundBox.setAsBox(goalWidth / 2, postThickness / 2);
 		bGoalTop.createFixture(groundBox, 20.0f);
-
+	}
+	
+	// Detects if the ball is just over the goal	
+	public boolean isItOverTheGoal(Vec2 position){
+		if (position.y < bGoalTop.getPosition().y && position.y > (bGoalTop.getPosition().y-Ball.getRadius()*2)){
+			if (isLeft){
+				return (position.x<(bGoalEnd.getPosition().x+goalWidth));
+			}else{
+				return (position.x>(bGoalEnd.getPosition().x-goalWidth));
+			}
+		}else return false;		
 	}
 
 	// Method to draw a goal in the specified canvas

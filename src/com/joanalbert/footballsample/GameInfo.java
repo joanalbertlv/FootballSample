@@ -14,5 +14,6 @@ public class GameInfo {
 	public static final float densityRate = 1.2f;
 	public static final float forceRate = 1.1f;
 	public static final float movementRate = 1.2f;
-
+	public static final float rateOfKick = 0.5f; 
+	
 }

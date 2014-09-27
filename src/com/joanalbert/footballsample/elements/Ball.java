@@ -45,6 +45,10 @@ public class Ball {
 
 		body.createFixture(fixtureDef);
 	}
+	
+	public static float getRadius(){
+		return ballRadius;
+	}
 
 	// Method to draw a ball in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {

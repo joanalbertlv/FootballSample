@@ -1,13 +1,21 @@
 package com.joanalbert.footballsample;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MotionEventCompat;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,11 +32,16 @@ public class MainActivity extends Activity {
 	boolean kick = false;
 	float fx = 0, fy = 0;
 	float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+	
+	public static SharedPreferences pref; 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		pref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		
 		// We place a SurfaceView in the activity in order to draw on it
 		surface = new SurfaceView(this);
 		surfaceHolder = surface.getHolder();
@@ -65,6 +78,16 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		handler.removeCallbacks(update);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		handler = new Handler();
+		handler.post(update);
+
+		// Current time
+		this.time = System.currentTimeMillis();
 	}
 
 	// Thread that updates the game
@@ -133,18 +156,53 @@ public class MainActivity extends Activity {
 				// If the user has dragged the finger, then we store two forces
 				// x and y that will be applied to the players. Positive Y-force
 				// not allowed.
-				if (Math.abs(dx) < Math.abs(dy)){
-					fy = -2000*GameInfo.movementRate; fx=0;
+				if (Math.abs(dx) < Math.abs(dy)) {
+					fy = -2000 * GameInfo.movementRate;
+					fx = 0;
 				} else {
 					fy = 0;
-					if (dx>0) fx = 2000*GameInfo.movementRate;
-					else fx = -2000*GameInfo.movementRate;
-				}				
+					if (dx > 0)
+						fx = 2000 * GameInfo.movementRate;
+					else
+						fx = -2000 * GameInfo.movementRate;
+				}
 			}
 			return true;
 		default:
 			return super.onTouchEvent(event);
 		}
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar actions click
+		switch (item.getItemId()) {
+		case R.id.preferencemenu:
+			showPreferences();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/***
+	 * Called when invalidateOptionsMenu() is triggered
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	public void showPreferences() {
+		Intent i = new Intent(this, SetPreferenceActivity.class);
+		startActivity(i);
 	}
 
 }
