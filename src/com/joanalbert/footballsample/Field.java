@@ -530,31 +530,34 @@ public class Field {
 	public void draw(Canvas canvas) {
 		canvas.drawColor(backgroundColor);
 
+		// Background drawn
+		walls.draw(canvas, paint);
+		
 		// Scoreboard drawn
-		paint.setColor(Color.WHITE);
+		paint.setColor(Color.BLACK);
 		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(40);
 		canvas.drawText("Team1  " + GameInfo.myGoals + " - " + GameInfo.pcGoals
 				+ "  Team2 ", (GameInfo.worldWidth / 2) * GameInfo.worldScale,
 				15 * GameInfo.worldScale, paint);
 
+		// We draw each one of the elements
+		myPlayer1.draw(canvas, paint);
+		myPlayer2.draw(canvas, paint);
+		pcPlayer1.draw(canvas, paint);
+		pcPlayer2.draw(canvas, paint);
+		ball.draw(canvas, paint);
+		lGoal.draw(canvas, paint);
+		rGoal.draw(canvas, paint);
+
 		// When there is a goal, we show it in the middle of the screen
+		paint.setColor(Color.BLACK);
 		if (isGoal) {
 			paint.setTextSize(150);
 			canvas.drawText("GOAL!", (GameInfo.worldWidth / 2)
 					* GameInfo.worldScale, 45 * GameInfo.worldScale, paint);
 
 		}
-
-		// We draw each one of the elements
-		walls.draw(canvas, paint);
-		ball.draw(canvas, paint);
-		myPlayer1.draw(canvas, paint);
-		myPlayer2.draw(canvas, paint);
-		pcPlayer1.draw(canvas, paint);
-		pcPlayer2.draw(canvas, paint);
-		lGoal.draw(canvas, paint);
-		rGoal.draw(canvas, paint);
 	}
 
 }

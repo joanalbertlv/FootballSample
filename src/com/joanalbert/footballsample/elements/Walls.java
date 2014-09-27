@@ -16,7 +16,8 @@ import com.joanalbert.footballsample.GameInfo;
 //This class represents the limits of the field
 public class Walls {
 
-	private static final int wallsColor = Color.GREEN;
+	private static final int backColor1 = 0xFF00DDFF;
+	private static final int backColor2 = 0xFF00FF88;
 	private static final float wallThickness = 2;
 	float xIni, yIni, xEnd, yEnd;
 
@@ -73,12 +74,16 @@ public class Walls {
 
 	// Method to draw the limits of the field in the specified canvas
 	public void draw(Canvas canvas, Paint paint) {
-		paint.setColor(wallsColor);
-		paint.setStyle(Paint.Style.STROKE);
+		paint.setColor(backColor1);
+		paint.setStyle(Paint.Style.FILL);
 		// We do not draw the bodies but a rectangle
 		canvas.drawRect((xIni + 1) * GameInfo.worldScale, (yIni + 1)
 				* GameInfo.worldScale, (xEnd - 1) * GameInfo.worldScale,
 				(yEnd - 1) * GameInfo.worldScale, paint);
+		paint.setColor(backColor2);
+		canvas.drawRect((xIni + 1) * GameInfo.worldScale, (yEnd - 1)
+				* GameInfo.worldScale, (xEnd - 1) * GameInfo.worldScale,
+				(yEnd +10) * GameInfo.worldScale, paint);
 	}
 
 }

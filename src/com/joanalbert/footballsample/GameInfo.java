@@ -9,7 +9,7 @@ public class GameInfo {
 	public static float deviceScreenHeight;
 	
 	public static final float worldWidth=170;
-	public static final float worldHeight=80;
+	public static final float worldHeight=75;
 	
 	public static final float densityRate = 1.2f;
 	public static final float forceRate = 1.1f;
